@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  discord_bot:
+    container_name: rpg_bot
+    build: .
+    volumes:
+      - ./config.json:/usr/src/rpg_bot_build/config.json
+    restart: always
