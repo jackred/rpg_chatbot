@@ -1,5 +1,7 @@
 {
   "token": "<Discord Token>",
   "alana": "<Alana IP>",
-  "project": "<XX>"
+  "project": "<XX>",
+  "mongo": "mongodb://<IP>:<PORT>/alana",
+  "user_id": "<NAME_ID>"
 }
