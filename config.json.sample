@@ -1,5 +1,6 @@
 {
   "token": "<Discord Token>",
+  "prefix": {"general": "--"},
   "alana": "<Alana IP>",
   "project": "<XX>",
   "mongo": "mongodb://<IP>:<PORT>/alana",
