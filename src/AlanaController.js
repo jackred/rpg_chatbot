@@ -22,7 +22,7 @@ class AlanaController {
     try {
       fn(message);
     } catch (error){
-      this.wrong_argument(message.channel, error);
+      this.wrongArgument(message.channel, error);
     } 
   }
   
@@ -30,7 +30,7 @@ class AlanaController {
     if (message.author.bot) { return; }
     if (message.channel.type === 'dm'){
     } else if (message.channel.type === 'text') {
-      this.handleCommand(this.command, message, message.content, permission);
+      this.handleCommand(this.command, message, message.content);
     }
   }
 
@@ -49,7 +49,7 @@ class AlanaController {
     command.action.call(command, message, text, this.db); // some action can trigger command AND args
   }
 
-  wrong_argument(channel, help){
+  wrongArgument(channel, help){
     channel.send('Wrong argument given. Please, read the help below.\n' + help);
   }
 }

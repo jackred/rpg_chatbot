@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const config = require('../config.json');
-const { config_schema } = require('./model/config');
+const { configSchema } = require('./model/configs');
 
 
 class AlanaDB {
@@ -13,13 +13,25 @@ class AlanaDB {
   async initDb() {
     //this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true});
     this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true});
-    this.db.model('configs', config_schema);
+    this.db.model('configs', configSchema);
   }
-  
-  find_prefix(prefix) {
-    return this.db.models.configs.findOne({prefix}).exec();
+
+  findOneInCollection(filter={}, collection='configs') {
+    return this.db.models[collection].findOne(filter).exec();
+  }
+
+  addInCollection(added={}, options={}, collection='configs') {
+    this.db.models[collection]
+      .insertMany(added, options)
+      .then(d => console.log(`DB: object added to collection ${collection}`));
+  }
+
+  findPrefix(prefix) {
+    return this.findOneInCollection({prefix}, 'configs');
   }
 }
+
+
 
 module.exports = AlanaDB;
 

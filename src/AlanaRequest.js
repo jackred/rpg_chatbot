@@ -6,33 +6,33 @@ const uuidv1 = require('uuid/v1');
 const config = require('../config.json');
 
 
-function send_embed(channel, text, author, config_name)  {
+function sendEmbed(channel, text, author, configName)  {
   let embed = new RichEmbed()
       .setAuthor(author)
       .setColor('#FAA')
       .setTitle(text)
       .setTimestamp()
-      .setFooter(config_name);
+      .setFooter(configName);
   channel.send(embed);
 }
 
 
-function create_session_id() {
+function createSessionId() {
   return `${config.project}.${uuidv1()}`;
 
 }
 
 
-function build_request(question, data) {
+function buildRequest(question, data) {
   data.question = question;
-  data.session_id = create_session_id();
+  data.session_id = createSessionId();
   data.user_id = config.user_id;
   return data;
 }
 
 
-function build_options(question, data_bot, uri=config.alana) {
-  const data = build_request(question, data_bot);
+function buildOptions(question, dataBot, uri=config.alana) {
+  const data = buildRequest(question, dataBot);
   return {
     method: 'POST',
     uri: uri,
@@ -42,8 +42,8 @@ function build_options(question, data_bot, uri=config.alana) {
 }
 
 
-function request_alana(question, request_config) {
-  const options = build_options(question, request_config.data);
+function requestAlana(question, requestConfig) {
+  const options = buildOptions(question, requestConfig.data);
   return request.post(options)
     .then(res => {
       console.log(`ANSWER: ${res.result}`);
@@ -54,11 +54,11 @@ function request_alana(question, request_config) {
 
 
 async function answer(message, text, db) {
-  const request_config = await db.find_prefix(message.content[0]);
-  console.log( `INFO: prefix found: ${request_config !== null}`);
-  if (request_config !== null) { // else not a prefix, regular message
-    const res = await request_alana(message.content.substr(1), request_config);
-    send_embed(message.channel, res.result, res.bot_name, request_config.name);
+  const requestConfig = await db.findPrefix(message.content[0]);
+  console.log( `INFO: prefix found: ${requestConfig !== null}`);
+  if (requestConfig !== null) { // else not a prefix, regular message
+    const res = await requestAlana(message.content.substr(1), requestConfig);
+    sendEmbed(message.channel, res.result, res.bot_name, requestConfig.name);
   }
 }
 
