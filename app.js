@@ -2,9 +2,15 @@ const Discord = require('discord.js');
 const request = require('request-promise-native');
 const uuidv1 = require('uuid/v1');
 const config = require('./config.json');
-const { answer } = require('./src/AlanaRequest');
-const { AlanaDB } = require('./src/AlanaDB');
-const { config_schema } = require('./src/model/config');
+
+// class
+const AlanaDB = require('./src/AlanaDB');
+const AlanaController = require('./src/AlanaController');
+const AlanaCommand = require('./src/AlanaCommand');
+
+// module
+const AlanaRequest = require('./src/AlanaRequest');
+const AlanaParser = require('./src/AlanaParser');
 
 
 let database = new AlanaDB();
@@ -16,7 +22,16 @@ client.on('ready', () => {
 });
 
 
-client.on('message', msg => answer(msg, msg, database));
+
+let cmd = new AlanaCommand(
+  AlanaRequest.answer,
+  {},
+  '',
+  '',
+  AlanaParser.prefixParser
+);
+
+client.on('message', msg => AlanaRequest.answer(msg, msg, database));
 
 
 client.login(config.token)

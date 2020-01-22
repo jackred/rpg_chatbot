@@ -1,15 +1,18 @@
+'use strict';
+
 const { RichEmbed } = require('discord.js');
 const request = require('request-promise-native');
 const uuidv1 = require('uuid/v1');
 const config = require('../config.json');
 
 
-function send_embed(channel, text, author)  {
+function send_embed(channel, text, author, config_name)  {
   let embed = new RichEmbed()
       .setAuthor(author)
       .setColor('#FAA')
       .setTitle(text)
-      .setTimestamp(Date());
+      .setTimestamp()
+      .setFooter(config_name);
   channel.send(embed);
 }
 
@@ -54,8 +57,8 @@ async function answer(message, text, db) {
   const request_config = await db.find_prefix(message.content[0]);
   console.log( `INFO: prefix found: ${request_config !== null}`);
   if (request_config !== null) { // else not a prefix, regular message
-    res = await request_alana(message.content.substr(1), request_config);
-    send_embed(message.channel, res.result, res.bot_name);
+    const res = await request_alana(message.content.substr(1), request_config);
+    send_embed(message.channel, res.result, res.bot_name, request_config.name);
   }
 }
 

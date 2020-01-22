@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const config = require('../config.json');
 const { config_schema } = require('./model/config');
@@ -15,11 +17,9 @@ class AlanaDB {
   }
   
   find_prefix(prefix) {
-      return this.db.models.configs.findOne({prefix}).exec();
+    return this.db.models.configs.findOne({prefix}).exec();
   }
 }
 
-module.exports = { 
-  AlanaDB
-};
+module.exports = AlanaDB;
 
