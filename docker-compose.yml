@@ -7,3 +7,8 @@ services:
     volumes:
       - ./config.json:/usr/src/rpg_bot_build/config.json
     restart: always
+
+networks:
+  default:
+    external:
+      name: ng_network
