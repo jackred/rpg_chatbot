@@ -7,9 +7,8 @@ function prefixParser(text) {
   let res = -1;
   for (let prefix in config.prefix) { // yeah iterating over all keys when I would have do a while and stop when needed...but I'm lazy this time
     console.log(prefix);
-    let exp = new RegExp('^'+config.prefix[prefix]);
-    if (exp.test(text)){
-      let rest = text.replace(exp, '');
+    if (text.startsWith(prefix)){
+      let rest = text.replace(text, '');
       res = {'first': config.prefix[prefix], 'rest': rest.trim()};
     }
   }
