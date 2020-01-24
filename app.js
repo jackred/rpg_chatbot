@@ -10,6 +10,8 @@ const AlanaCommand = require('./src/AlanaCommand');
 const AlanaRequest = require('./src/AlanaRequest');
 const AlanaParser = require('./src/AlanaParser');
 const AlanaConfig = require('./src/AlanaConfig');
+const AlanaDialog = require('./src/AlanaDialog');
+
 
 
 let database = new AlanaDB();
@@ -21,29 +23,66 @@ client.on('ready', () => {
 });
 
 // config command
-let createCommand = new AlanaCommand(
-  AlanaConfig.create,
+let createConfigCommand = new AlanaCommand(
+  AlanaConfig.createConfig,
   {},
-  () => `Create a config` // 
+  () => `\`${config.prefix.general}config create <JSON>\n\``,
+  function () {
+    return this.generalHelp() + 'Create a configuration. Configuration pecify the bots to use in the request.\nE.g:\n `'+ config.prefix.general +'config create {JSON TEMPLATE}`';
+  }
+);
+
+let deleteConfigCommand = new AlanaCommand(
+  AlanaConfig.deleteConfig,
+  {},
+  () => `\`${config.prefix.general}config delete <configuration name>\n\``,
+  function () {
+    return this.generalHelp() + 'Delete a configuration, and all the dialog using it.  bot to use in the request.\nE.g:\n `'+ config.prefix.general +'config delete test_config`';
+  }
+);
+
+let templateConfigCommand = new AlanaCommand(
+  AlanaConfig.printTemplate,
+  {},
+  () => `\`${config.prefix.general}config template\n\``,
+  function () {
+    return this.generalHelp() + 'Print a template of configuration\n';
+  }
 );
 
 let configCommand = new AlanaCommand(
-  () => console.log("INGO: Config command called"),
-  {'create': createCommand},
+  () => console.log("INFO: Config command called"),
+  {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand},
   function() {
-    console.log("wtf");
-    return `${config.prefix.general}\`config <subcomand>\`.` + '\n'
+    return `${config.prefix.general}\`config <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
   }
 );
 
 // dialog command
-let dialogCommand = new AlanaCommand(
-  () => console.log("INGO: Dialog command called"),
+let startDialogCommand = new AlanaCommand(
+  AlanaDialog.startDialog,
   {},
+  () => `\`${config.prefix.general}dialog start <prefix> <config name>\n\``,
+  function () {
+    return this.generalHelp() + 'Start a dialog using a specific configuration. To talk to Alana, start your message with your <prefix>.\nE.g:\n `'+ config.prefix.general +'dialog start ! config_test`\n`!hello Alana`\n';
+  }
+);
+
+let endDialogCommand = new AlanaCommand(
+  AlanaDialog.endDialog,
+  {},
+  () => `\`${config.prefix.general}dialog end <prefix>\n\``,
+  function () {
+    return this.generalHelp() + 'End a dialog (specify it by using the <prefix>).\nE.g:\n `'+ config.prefix.general +'dialog end !`\n';
+  }
+);
+
+let dialogCommand = new AlanaCommand(
+  () => console.log("INFO: Dialog command called"),
+  {'start': startDialogCommand, end: endDialogCommand},
   function() {
-    console.log("wtf");
-    return `${config.prefix.general}\`dialog <subcomand>\`.` + '\n'
+    return `${config.prefix.general}\`dialog <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
   }
 );
@@ -54,7 +93,7 @@ let generalPrefixCmd = new AlanaCommand(
   {'dialog': dialogCommand, 'config': configCommand},
   function(){
     return `General Command prefix: ${config.prefix.general}\n`
-      + this.listSubCommand().join(', ')
+      + this.listSubCommand().map(d => `\`${d}\``).join(', ')
       + '\n';
   },
 );

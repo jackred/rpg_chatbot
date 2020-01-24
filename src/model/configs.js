@@ -3,16 +3,13 @@ const mongoose = require('mongoose');
 var configSchema = new mongoose.Schema(
   {
     name: {type: String, required: true},
-    prefix: {type: String, require: true},
     data: {
       overrides: {
-	BOT_LIST: [{type: mongoose.Schema.Types.Mixed, required: true}],
-	PRIORITY_BOTS: [{type: mongoose.Schema.Types.Mixed, required: true}] 
+	BOT_LIST: [mongoose.Schema.Types.Mixed],
+	PRIORITY_BOTS: [mongoose.Schema.Types.Mixed]
       }
     }
   }
 );
 
-module.exports = { 
-  configSchema
-};
+module.exports = configSchema;

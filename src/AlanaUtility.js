@@ -19,9 +19,14 @@ function splitIn2(text, cut){
   return [text.substr(0, index), text.substr(index+1)];
 }
 
+function reduceWhitespace(text) {
+  return text.replace(/\s\s+/g, ' ').trim().split(' ');
+}
+
 module.exports = { 
   splitIn2,
   randomInt,
   random2Int,
-  isBetween
+  isBetween,
+  reduceWhitespace
 };

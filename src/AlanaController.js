@@ -11,18 +11,17 @@ class AlanaController {
     this.client.on('message', this.handleMessage.bind(this));
   }
 
-  
   handleReaction(){}
 
   handleMention(){}
 
   handleAttachement(){}
 
-  catchBadMessage(fn, message){
+  async catchErrorCommand(fn, message){
     try {
-      fn(message);
+      await fn(message);
     } catch (error){
-      this.wrongArgument(message.channel, error);
+      this.catchError(message.channel, error);
     } 
   }
   
@@ -31,10 +30,12 @@ class AlanaController {
     if (message.channel.type === 'dm'){
     } else if (message.channel.type === 'text') {
       this.handleCommand(this.command, message, message.content);
+
     }
   }
 
   handleCommand(command, message, text) {
+    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db)), message);// some action can trigger command AND args
     let parsed = command.parser(text);
     if (parsed !== -1){
       if (parsed.first === config.help){
@@ -45,12 +46,11 @@ class AlanaController {
 	this.handleCommand(command.subCommand[parsed.first], message, parsed.rest);
       }
     }
-    // register command in db
-    command.action.call(command, message, text, this.db); // some action can trigger command AND args
   }
 
-  wrongArgument(channel, help){
-    channel.send('Wrong argument given. Please, read the help below.\n' + help);
+  catchError(channel, error){
+    console.log('Error:', error);
+    channel.send('```A problem occured:\n' + error +'```');
   }
 }
 

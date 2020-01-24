@@ -1,27 +1,41 @@
 'use strict';
 
-function insertConfigIfNotPrefix(jsonConfig, db) {
-  db.findPrefix(jsonConfig.prefix)
+function insertConfigIfNotName(jsonConfig, db) {
+  return db.findConfigByName(jsonConfig.name)
     .then(res => {
       if (res === null) {
-	db.addInCollection(jsonConfig);
+	return db.addConfig(jsonConfig);
       } else {
-	throw `There's already a configuration with the prefix ${jsonConfig.prefix}: ${res.name}`;
+	throw `There's already a configuration with the name ${jsonConfig.name}`;
       }
     });
 }
 
-function create(message, text, db){
+async function createConfig(message, text, db){
+  let jsonConfig = {};
   try {
-    const jsonConfig = JSON.parse(text);
-    console.log(jsonConfig);
-    insertConfigIfNotPrefix(jsonConfig, db);
+    jsonConfig = JSON.parse(text);
+    console.log('INFO: Config:', jsonConfig);
   } catch(error) {
     throw `Incorrect JSON: ${error.message}`;
   }
+  await insertConfigIfNotName(jsonConfig, db).then(d => message.channel.send(d));
 }
 
+async function deleteConfig(message, text, db) {
+  const { deletedConfig, msg } = await db.removeConfigAndReturn({name: text});
+  message.channel.send(msg);
+  if (deletedConfig !== null){
+    db.removeDialog({config: deletedConfig._id}).then(d => message.channel.send(d));
+  }
+}
+
+function printTemplate(message, text, db) {
+  message.channel.send('```{"name":"NAME", "data": {"overrides": {"BOT_LIST": ["BOT1", "BOT2", "BOT3"], "PRIORITY_BOTS":[["BOT2", "BOT1"], "BOT3"]}}}```');
+}
 
 module.exports = { 
-  create
+  createConfig,
+  deleteConfig,
+  printTemplate
 };

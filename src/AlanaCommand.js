@@ -16,7 +16,7 @@ class AlanaCommand {
   defaultHelp() {
     let msg = this.generalHelp();
     for (let command in this.subCommand) {
-      msg += this.subCommand[command].generalHelp();
+      msg +='  ' + this.subCommand[command].generalHelp();
     }
     return msg;
   }
