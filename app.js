@@ -28,7 +28,7 @@ let createConfigCommand = new AlanaCommand(
   {},
   () => `\`${config.prefix.general}config create <JSON>\n\``,
   function () {
-    return this.generalHelp() + 'Create a configuration. Configuration pecify the bots to use in the request.\nE.g:\n `'+ config.prefix.general +'config create {JSON TEMPLATE}`';
+    return this.generalHelp() + 'Create a configuration. Configuration pecify the bots to use in the request.\nE.g:\n `'+ config.prefix.general +'config create {JSON TEMPLATE}`\n';
   }
 );
 
@@ -37,7 +37,16 @@ let deleteConfigCommand = new AlanaCommand(
   {},
   () => `\`${config.prefix.general}config delete <configuration name>\n\``,
   function () {
-    return this.generalHelp() + 'Delete a configuration, and all the dialog using it.  bot to use in the request.\nE.g:\n `'+ config.prefix.general +'config delete test_config`';
+    return this.generalHelp() + 'Delete a configuration, and all the dialog using it.  bot to use in the request.\nE.g:\n `'+ config.prefix.general +'config delete test_config`\n';
+  }
+);
+
+let getConfigCommand = new AlanaCommand(
+  AlanaConfig.getConfig,
+  {},
+  () => `\`${config.prefix.general}config get <name>\n\``,
+  function () {
+    return this.generalHelp() + 'Print the JSON of the config named <name>. Useful to copy it.\nE.g:'+config.prefix.general+'config get config1\n';
   }
 );
 
@@ -61,7 +70,7 @@ let listConfigCommand = new AlanaCommand(
 
 let configCommand = new AlanaCommand(
   () => console.log("INFO: Config command called"),
-  {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand, 'list': listConfigCommand},
+  {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand, 'list': listConfigCommand, 'get': getConfigCommand},
   function() {
     return `${config.prefix.general}\`config <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways

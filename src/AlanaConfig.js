@@ -35,9 +35,21 @@ async function deleteConfig(message, text, db) {
 }
 
 function listConfig(message, text, db) {
-  console.log('->>', text);
   db.findInCollection().then(resConfigs => {
     AlanaList.sendList(message.channel, resConfigs, AlanaBuildMessage.buildEmbedListConfig);
+  });
+}
+
+function getConfig(message, text, db) {
+  console.log(text);
+  db.findConfigByName(text).then(d => {
+    let msg = '';
+    if (d === null){
+      msg = 'No config with this name.';
+    } else {
+      msg = '```' + JSON.stringify(d) + '```';
+    }
+    message.channel.send(msg);
   });
 }
 
@@ -49,5 +61,6 @@ module.exports = {
   createConfig,
   deleteConfig,
   listConfig,
+  getConfig,
   printTemplate
 };
