@@ -1,5 +1,9 @@
 'use strict';
 
+const AlanaBuildMessage = require('./AlanaBuildMessage');
+const AlanaList = require('./AlanaList');
+
+
 function insertConfigIfNotName(jsonConfig, db) {
   return db.findConfigByName(jsonConfig.name)
     .then(res => {
@@ -30,6 +34,13 @@ async function deleteConfig(message, text, db) {
   }
 }
 
+function listConfig(message, text, db) {
+  console.log('->>', text);
+  db.findInCollection().then(resConfigs => {
+    AlanaList.sendList(message.channel, resConfigs, AlanaBuildMessage.buildEmbedListConfig);
+  });
+}
+
 function printTemplate(message, text, db) {
   message.channel.send('```{"name":"NAME", "data": {"overrides": {"BOT_LIST": ["BOT1", "BOT2", "BOT3"], "PRIORITY_BOTS":[["BOT2", "BOT1"], "BOT3"]}}}```');
 }
@@ -37,5 +48,6 @@ function printTemplate(message, text, db) {
 module.exports = { 
   createConfig,
   deleteConfig,
+  listConfig,
   printTemplate
 };

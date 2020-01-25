@@ -35,7 +35,6 @@ class AlanaController {
   }
 
   handleCommand(command, message, text) {
-    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db)), message);// some action can trigger command AND args
     let parsed = command.parser(text);
     if (parsed !== -1){
       if (parsed.first === config.help){
@@ -46,6 +45,7 @@ class AlanaController {
 	this.handleCommand(command.subCommand[parsed.first], message, parsed.rest);
       }
     }
+    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db)), message);// some action can trigger command AND args
   }
 
   catchError(channel, error){

@@ -22,8 +22,8 @@ class AlanaDB {
     return this.db.models[collection].findOne(filter).lean().exec();
   }
 
-  findInCollection(filter={}, projection={}, collection='configs') {
-    return this.db.models[collection].find(filter, projection).lean().exec();
+  findInCollection(filter={}, projection={}, limit=0, collection='configs') {
+    return this.db.models[collection].find(filter, projection).lean().limit(limit).exec();
   }
 
   findByIdInCollection(id, collection='configs') {

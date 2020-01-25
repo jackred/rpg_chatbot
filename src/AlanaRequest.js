@@ -1,19 +1,8 @@
 'use strict';
 
-const { RichEmbed } = require('discord.js');
 const request = require('request-promise-native');
+const AlanaBuildMessage = require('./AlanaBuildMessage');
 const config = require('../config.json');
-
-
-function sendEmbed(channel, text, author, configName)  {
-  let embed = new RichEmbed()
-      .setAuthor(author)
-      .setColor('#FAA')
-      .setTitle(text)
-      .setTimestamp()
-      .setFooter(configName);
-  channel.send(embed);
-}
 
 
 function createSessionId() {
@@ -60,7 +49,7 @@ async function answer(message, text, db) {
   if (requestDialog !== null) { // else not a prefix, regular message
     const requestConfig = await db.findByIdConfig(requestDialog.config);
     const res = await requestAlana(message.content.substr(1), requestDialog, requestConfig);
-    sendEmbed(message.channel, res.result, res.bot_name, requestConfig.name);
+    message.channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_name, requestConfig.name));
   }
 }
 

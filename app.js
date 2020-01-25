@@ -19,7 +19,7 @@ let database = new AlanaDB();
 const client = new Discord.Client();
 client.on('ready', () => {
   console.log('Starting!');
-  client.user.setActivity('Listening');
+  client.user.setActivity(`Listening to : ${config.prefix.general}`);
 });
 
 // config command
@@ -50,9 +50,18 @@ let templateConfigCommand = new AlanaCommand(
   }
 );
 
+let listConfigCommand = new AlanaCommand(
+  AlanaConfig.listConfig,
+  {},
+  () => `\`${config.prefix.general}config list\n\``,
+  function () {
+    return this.generalHelp() + 'List all the configuration\n';
+  }
+);
+
 let configCommand = new AlanaCommand(
   () => console.log("INFO: Config command called"),
-  {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand},
+  {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand, 'list': listConfigCommand},
   function() {
     return `${config.prefix.general}\`config <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
