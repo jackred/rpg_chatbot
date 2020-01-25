@@ -1,8 +1,10 @@
 {
   "token": "<Discord Token>",
-  "prefix": {"general": "--"},
+  "prefix": {"general": "++"},
   "alana": "<Alana IP>",
+  "help": "help",
   "project": "<XX>",
+  "projectId": "CA2020",
   "mongo": "mongodb://<IP>:<PORT>/alana",
   "user_id": "<NAME_ID>"
 }
