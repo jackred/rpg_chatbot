@@ -18,8 +18,8 @@ class AlanaDB {
     this.db.model('dialogs', dialogSchema);
   }
 
-  findOneInCollection(filter={}, collection='configs') {
-    return this.db.models[collection].findOne(filter).lean().exec();
+  findOneInCollection(filter={}, projection={}, collection='configs') {
+    return this.db.models[collection].findOne(filter, projection).lean().exec();
   }
 
   findInCollection(filter={}, projection={}, limit=0, collection='configs') {
@@ -78,12 +78,12 @@ class AlanaDB {
     return this.findOneInCollection(id);
   }
   
-  findConfigByName(name) {
-    return this.findOneInCollection({name});
+  findConfigByName(name, projection={}) {
+    return this.findOneInCollection({name}, projection);
   }
   
   findDialogByPrefix(prefix) {
-    return this.findOneInCollection({prefix}, 'dialogs');
+    return this.findOneInCollection({prefix}, {}, 'dialogs');
   }
 
   removeConfigAndReturn(configToRemove) {

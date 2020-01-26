@@ -6,7 +6,7 @@ const { RichEmbed } = require('discord.js');
 function buildEmbedAnswer(text, author, configName)  {
   let embed = new RichEmbed()
       .setAuthor(author)
-      .setColor('#AFFF000')
+      .setColor('#AFFF00')
       .setTitle(text)
       .setTimestamp()
       .setFooter(configName);

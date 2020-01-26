@@ -42,7 +42,7 @@ function listConfig(message, text, db) {
 
 function getConfig(message, text, db) {
   console.log(text);
-  db.findConfigByName(text).then(d => {
+  db.findConfigByName(text, {'name': 1, 'data':1, '_id': 0}).then(d => {
     let msg = '';
     if (d === null){
       msg = 'No config with this name.';
