@@ -18,7 +18,10 @@ async function startDialog(message, text, db){
   const splitted = AlanaUtility.reduceWhitespace(text);
   if (splitted[0].length !== 1) { throw 'Prefix should be one character'; }
   const requestDialog = await db.findDialogByPrefix(splitted[0]);
-  if (requestDialog !== null) { throw `There's already a dialog using the prefix ${splitted[0]}: ${requestDialog.name}`; }
+  if (requestDialog !== null) {
+    const requestConfig = await db.findByIdConfig(requestDialog.config);
+    throw `There's already a dialog using the prefix ${splitted[0]} with the config ${requestConfig.name}`;
+  }
   const requestConfig = await db.findConfigByName(splitted[1]);
   if (requestConfig === null) { throw `There's no configuration named ${splitted[1]}`; }
   const dialog = {};
@@ -39,6 +42,7 @@ function listDialog(message, text, db) {
     AlanaList.sendList(message.channel, resDialogs, async (d) => await AlanaBuildMessage.buildEmbedListDialog(d, db));
   });
 }
+
 
 module.exports = { 
   startDialog,
