@@ -13,27 +13,47 @@ function buildEmbedAnswer(text, author, configName)  {
   return embed;
 }
 
-function buildEmbedListTemplate() {
+function buildEmbedListTemplate(title) {
   let embed = new RichEmbed()
       .setColor('#44FF11')
-      .setTimestamp();
+      .setTimestamp()
+      .setTitle(title);
   return embed;
 }
 
+function buildFieldConfig(conf) {
+  const title = conf.name;
+  // array of object/string to string
+  let value = Object.keys(conf.data.overrides).map(k => k + ': '+ conf.data.overrides[k].map(JSON.stringify).join(', ')).join('\n');
+  return [`**${title}**`, value];
+}
+
 function buildEmbedListConfig(configs) {
-  let embed = buildEmbedListTemplate();
-  embed.setTitle('List of configuration');
+  let embed = buildEmbedListTemplate('List of configuration');
   for (let conf of configs) {
-    const title = conf.name;
-    console.log(conf);
-    // array of object/string to string
-    let value = Object.keys(conf.data.overrides).map(k => k + ': '+ conf.data.overrides[k].map(JSON.stringify).join(', ')).join('\n');
-    embed.addField(title, value);
+    const field = buildFieldConfig(conf);
+    embed.addField(...field);
+  }
+  return embed;
+}
+
+function buildFieldDialog(dial, confName) {
+  const title = dial.prefix + ' ' + confName;
+  return [`**${title}**`, dial.session_id];
+}
+
+async function buildEmbedListDialog(dialogs, db) {
+  let embed = buildEmbedListTemplate('List of dialogs');
+  for (let dial of dialogs) {
+    const confName = await db.findByIdConfig(dial.config);
+    const field = buildFieldDialog(dial, confName.name);
+    embed.addField(...field);
   }
   return embed;
 }
 
 module.exports = { 
   buildEmbedAnswer,
-  buildEmbedListConfig
+  buildEmbedListConfig,
+  buildEmbedListDialog
 };

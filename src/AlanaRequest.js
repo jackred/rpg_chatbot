@@ -36,7 +36,7 @@ function requestAlana(question, requestDialog, requestConfig) {
   const options = buildOptions(question, requestConfig.data, requestDialog.session_id);
   return request.post(options)
     .then(res => {
-      console.log(`ANSWER: ${res.result}`);
+      console.log(`ANSWER: ${res.result}`, res);
       return res;
     })
     .catch(e => console.log(`ERR: ${e}`));

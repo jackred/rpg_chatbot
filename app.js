@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
-
 // class
 const AlanaDB = require('./src/AlanaDB');
 const AlanaController = require('./src/AlanaController');
@@ -78,6 +77,15 @@ let configCommand = new AlanaCommand(
 );
 
 // dialog command
+let listDialogCommand = new AlanaCommand(
+  AlanaDialog.listDialog,
+  {},
+  () => `\`${config.prefix.general}dialog list\n\``,
+  function () { // redundant
+    return this.generalHelp() + 'List all the dialog\n';
+  }
+);
+
 let startDialogCommand = new AlanaCommand(
   AlanaDialog.startDialog,
   {},
@@ -98,17 +106,18 @@ let endDialogCommand = new AlanaCommand(
 
 let dialogCommand = new AlanaCommand(
   () => console.log("INFO: Dialog command called"),
-  {'start': startDialogCommand, end: endDialogCommand},
+  {'start': startDialogCommand, end: endDialogCommand, list: listDialogCommand},
   function() {
     return `${config.prefix.general}\`dialog <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
   }
 );
 
+
 // general command
 let generalPrefixCmd = new AlanaCommand(
   () => console.log("INFO: Prefix general called"),
-  {'dialog': dialogCommand, 'config': configCommand},
+  {'dialog': dialogCommand, 'config': configCommand, 'test': testCommand},
   function(){
     return `General Command prefix: ${config.prefix.general}\n`
       + this.listSubCommand().map(d => `\`${d}\``).join(', ')

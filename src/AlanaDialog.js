@@ -1,7 +1,11 @@
 'use strict';
 
 const uuidv1 = require('uuid/v1');
+
 const AlanaUtility = require('./AlanaUtility');
+const AlanaBuildMessage = require('./AlanaBuildMessage');
+const AlanaList = require('./AlanaList');
+
 const config = require('../config.json');
 
 
@@ -30,7 +34,14 @@ function endDialog(message, text, db) {
   db.removeDialog({prefix: text}).then(d => message.channel.send(d));
 }
 
+function listDialog(message, text, db) {
+  db.findInCollection({}, {}, 0, 'dialogs').then(async resDialogs => {
+    AlanaList.sendList(message.channel, resDialogs, async (d) => await AlanaBuildMessage.buildEmbedListDialog(d, db));
+  });
+}
+
 module.exports = { 
   startDialog,
-  endDialog
+  endDialog,
+  listDialog
 };

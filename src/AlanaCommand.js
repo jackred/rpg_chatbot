@@ -12,7 +12,8 @@ class AlanaCommand {
     this.help = (help === '') ? this.defaultHelp : help; // function > string
     this.parser = parser; // fuction -> [string]
   }
-
+  // todo: add a help function for `helpXXX`
+  // that return `generalHelp` + `help`
   defaultHelp() {
     let msg = this.generalHelp();
     for (let command in this.subCommand) {

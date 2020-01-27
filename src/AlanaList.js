@@ -7,10 +7,10 @@ const emojiPrevious = '⬅';
 const reactionArrow = [emojiPrevious, emojiNext];
 const time = 60000; // time limit: 1 min
 
-function sliceList(configs, i, fn) {
+async function sliceList(list, i, fn) {
   const ind = i*10;
-  let embed = fn(configs.slice(ind, (i+1)*10));
-  embed.setFooter(`${ind} -> ${Math.min(configs.length, ind + configs.length)} / ${configs.length}`);
+  let embed = await fn(list.slice(ind, (i+1)*10));
+  embed.setFooter(`${ind} -> ${Math.min(list.length, ind + list.length)} / ${list.length}`);
   return embed;
   
 }
@@ -19,15 +19,15 @@ function filter(reaction, user){
   return (!user.bot) && (reactionArrow.includes(reaction.emoji.name)); // check if the emoji is inside the list of emojis, and if the user is not a bot
 }
 
-function onCollect(emoji, message, i, getList) {
-  if ((emoji.name === emojiPrevious) && (i > 0)) {
-    const embed = getList(i-1);
+async function onCollect(emoji, message, i, getList) {
+  if ((emoji.name === emojiPrevious) && (i >= 0)) {
+    const embed = await getList(i-1);
     if (embed.fields.length !== 0) {
       message.edit(embed);
       i--;
     }
   } else if (emoji.name === emojiNext) {
-    const embed = getList(i+1);
+    const embed = await getList(i+1);
     if (embed.fields.length !== 0) {
       message.edit(embed);
       i++;
@@ -40,15 +40,15 @@ function onCollect(emoji, message, i, getList) {
 function createCollectorMessage(message, getList) {
   let i = 0;
   const collector = message.createReactionCollector(filter, { time });
-  collector.on('collect', r => {
-    i = onCollect(r.emoji, message, i, getList);
+  collector.on('collect', async r => {
+    i = await onCollect(r.emoji, message, i, getList);
   });
   collector.on('end', collected => message.clearReactions());
 }
 
-function sendList(channel, list, fn){
-  let getList = i => sliceList(list, i, fn);
-  channel.send(getList(0))
+async function sendList(channel, list, fn){
+  let getList = async i => await sliceList(list, i, fn);
+  channel.send(await getList(0))
     .then(msg => msg.react(emojiPrevious))
     .then(msgReaction => msgReaction.message.react(emojiNext))
     .then(msgReaction => createCollectorMessage(msgReaction.message, getList));

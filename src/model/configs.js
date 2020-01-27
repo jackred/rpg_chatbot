@@ -5,8 +5,8 @@ var configSchema = new mongoose.Schema(
     name: {type: String, required: true},
     data: {
       overrides: {
-	BOT_LIST: [mongoose.Schema.Types.Mixed],
-	PRIORITY_BOTS: [mongoose.Schema.Types.Mixed]
+	BOT_LIST: [{type: mongoose.Schema.Types.Mixed, required: true}],
+	PRIORITY_BOTS: [{type: mongoose.Schema.Types.Mixed, required: true}]
       }
     }
   }
