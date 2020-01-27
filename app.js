@@ -117,7 +117,7 @@ let dialogCommand = new AlanaCommand(
 // general command
 let generalPrefixCmd = new AlanaCommand(
   () => console.log("INFO: Prefix general called"),
-  {'dialog': dialogCommand, 'config': configCommand, 'test': testCommand},
+  {'dialog': dialogCommand, 'config': configCommand},
   function(){
     return `General Command prefix: ${config.prefix.general}\n`
       + this.listSubCommand().map(d => `\`${d}\``).join(', ')
