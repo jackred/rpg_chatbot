@@ -22,7 +22,7 @@ function buildRequest(question, data, session_id) {
 
 function buildOptions(question, dataBot, session_id, uri=config.alana) {
   const data = buildRequest(question, dataBot, session_id);
-  console.log(`INFO: Request to ${uri}:`, data);
+  console.log(`INFO: Request to ${uri}:`, JSON.stringify(data));
   return {
     method: 'POST',
     uri: uri,

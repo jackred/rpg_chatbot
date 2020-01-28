@@ -47,14 +47,14 @@ function getConfig(message, text, db) {
     if (d === null){
       msg = 'No config with this name.';
     } else {
-      msg = '```' + JSON.stringify(d) + '```';
+      msg = '```json\n' + JSON.stringify(d) + '```';
     }
     message.channel.send(msg);
   });
 }
 
 function printTemplate(message, text, db) {
-  message.channel.send('```{"name":"NAME", "data": {"overrides": {"BOT_LIST": ["BOT1", "BOT2", "BOT3"], "PRIORITY_BOTS":[["BOT2", "BOT1"], "BOT3"]}}}```');
+  message.channel.send('```json\n{"name":"NAME", "data": {"overrides": {"BOT_LIST": ["BOT1", "BOT2", "BOT3"], "PRIORITY_BOTS":[["BOT2", "BOT1"], "BOT3"]}}}```');
 }
 
 module.exports = { 
