@@ -41,6 +41,19 @@ class AlanaDB {
       });
   }
 
+  updateOneInCollection(filter={}, doc={}, options={}, collection='configs') {
+    console.log('filter', filter);
+    console.log('update', doc);
+    return this.db.models[collection]
+      .updateOne(filter, doc, options)
+      .then(res => {
+	console.log(res);
+	let  msg = `${res.length} object(s) updated to collection ${collection}`;
+	console.log('DB:', msg);
+	return msg;
+      });
+  }
+
   deleteInCollection(filter={}, options={}, collection='configs') {
     return this.db.models[collection]
       .deleteMany(filter, options)
