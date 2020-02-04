@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
+// const exec = require('child_process').exec;
+// const fs = require('fs').promises;
 // class
 const AlanaDB = require('./src/AlanaDB');
 const AlanaController = require('./src/AlanaController');
@@ -104,15 +106,58 @@ let endDialogCommand = new AlanaCommand(
   }
 );
 
+let talkDialogCommand = new AlanaCommand(
+  AlanaDialog.talkToggleDialog,
+  {},
+  () => `\`${config.prefix.general}dialog talk <prefix>\n\``,
+  function () {
+    return this.generalHelp() + "Toggle the talk function. If it's true and the user is in a vocalChannel, the chatbot will join the user in the channel and read the next message with text to speech. If toggled to false, the bot will leave the channel.\n";
+  }
+);
+
+let listenDialogCommand = new AlanaCommand(
+  AlanaDialog.listenToggleDialog,
+  {},
+  () => `\`${config.prefix.general}dialog listen <prefix>\n\``,
+  function () {
+    return this.generalHelp() + "Toggle the listen function. If it's true and the user is in a vocalChannel, the chatbot will join the user in the channel and listen to the user. If toggled to false, the bot will leave the channel.\n";
+  }
+);
+
 let dialogCommand = new AlanaCommand(
   () => console.log("INFO: Dialog command called"),
-  {'start': startDialogCommand, end: endDialogCommand, list: listDialogCommand},
+  {'start': startDialogCommand, end: endDialogCommand, list: listDialogCommand, 'talk': talkDialogCommand, 'listen': listenDialogCommand}, 
   function() {
     return `${config.prefix.general}\`dialog <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
   }
 );
 
+
+
+// console.log(std.length);
+// fs.writeFile("./test.wav", std)
+// 	.then((err) => {
+// 	  if (err) throw err;
+// 	  console.log('The file has been saved!');
+// 	})
+// 	.then(_ => {
+// console.log('hey');
+// console.log(voiceChannel);
+
+// let testCommand = new AlanaCommand(
+//   (msg, text, db) => {
+//     console.log('s');
+//     exec('espeak -w ./test.wav -s 120 -v english "' + text+ '"', (err, std, ste) => {
+//       var voiceChannel = msg.member.voiceChannel;
+//       voiceChannel.join()
+// 	.then(connection => {
+// 	  const dispatcher = connection.playFile('./test.wav');
+// 	  dispatcher.on('end', end => voiceChannel.leave());
+// 	})
+// 	.catch(err => console.log(err));
+//     });
+//   });
 
 // general command
 let generalPrefixCmd = new AlanaCommand(
@@ -138,6 +183,4 @@ let controller = new AlanaController(client, cmd, {}, database);
 
 
 
-client.login(config.token)
-  .then(() => console.log("We're in!"))
-  .catch((err) => console.log(err));
+client.login(config.token).then(() => console.log("We're in!")).catch((err) => console.log(err));

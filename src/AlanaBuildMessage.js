@@ -72,8 +72,15 @@ async function buildEmbedListDialog(dialogs, db) {
   return embed;
 }
 
+async function buildEmbedDialog(dialog, db) {
+  let embed = buildEmbedListTemplate('Dialog');
+  embed = await buildFieldsDialog([dialog], embed, db);
+  return embed;
+}
+
 module.exports = { 
   buildEmbedAnswer,
   buildEmbedListConfig,
-  buildEmbedListDialog
+  buildEmbedListDialog,
+  buildEmbedDialog
 };

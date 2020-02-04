@@ -15,7 +15,7 @@ function insertConfigIfNotName(jsonConfig, db) {
     });
 }
 
-async function createConfig(message, text, db){
+async function createConfig(message, text, db, client){
   let jsonConfig = {};
   try {
     jsonConfig = JSON.parse(text);
@@ -26,7 +26,7 @@ async function createConfig(message, text, db){
   await insertConfigIfNotName(jsonConfig, db).then(d => message.channel.send(d));
 }
 
-async function deleteConfig(message, text, db) {
+async function deleteConfig(message, text, db, client) {
   const { deletedConfig, msg } = await db.removeConfigAndReturn({name: text});
   message.channel.send(msg);
   if (deletedConfig !== null){
@@ -34,13 +34,13 @@ async function deleteConfig(message, text, db) {
   }
 }
 
-function listConfig(message, text, db) {
+function listConfig(message, text, db, client) {
   db.findInCollection().then(resConfigs => {
     AlanaList.sendList(message.channel, resConfigs, AlanaBuildMessage.buildEmbedListConfig);
   });
 }
 
-function getConfig(message, text, db) {
+function getConfig(message, text, db, client) {
   console.log(text);
   db.findConfigByName(text, {'name': 1, 'data':1, '_id': 0}).then(d => {
     let msg = '';
@@ -53,7 +53,7 @@ function getConfig(message, text, db) {
   });
 }
 
-function printTemplate(message, text, db) {
+function printTemplate(message, text, db, client) {
   message.channel.send('```json\n{"name":"NAME", "data": {"overrides": {"BOT_LIST": ["BOT1", "BOT2", "BOT3"], "PRIORITY_BOTS":[["BOT2", "BOT1"], "BOT3"]}}}```');
 }
 

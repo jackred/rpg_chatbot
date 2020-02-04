@@ -10,12 +10,8 @@ class AlanaController {
     this.db = db;
     this.client.on('message', this.handleMessage.bind(this));
   }
-
+  
   handleReaction(){}
-
-  handleMention(){}
-
-  handleAttachement(){}
 
   async catchErrorCommand(fn, message){
     try {
@@ -45,7 +41,7 @@ class AlanaController {
 	this.handleCommand(command.subCommand[parsed.first], message, parsed.rest);
       }
     }
-    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db)), message);// some action can trigger command AND args
+    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db, this.client)), message);// some action can trigger command AND args
   }
 
   catchError(channel, error){

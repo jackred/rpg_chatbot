@@ -43,7 +43,7 @@ function requestAlana(question, requestDialog, requestConfig) {
 }
 
 
-async function answer(message, text, db) {
+async function answer(message, text, db, client) {
   const requestDialog = await db.findDialogByPrefix(message.content[0]);
   console.log( `INFO: dialog prefix found: ${requestDialog !== null}`);
   if (requestDialog !== null) { // else not a prefix, regular message

@@ -5,6 +5,15 @@ const config = require('../config.json');
 const configSchema = require('./model/configs');
 const dialogSchema = require('./model/dialogs');
 
+/*
+  /!\ TODO /!\
+  simplify db function
+  findOneInCollection
+
+  findOneEachCollection
+
+  findParticular
+*/
 
 class AlanaDB {
   constructor(){
@@ -42,13 +51,12 @@ class AlanaDB {
   }
 
   updateOneInCollection(filter={}, doc={}, options={}, collection='configs') {
-    console.log('filter', filter);
-    console.log('update', doc);
+    console.log('DB: filter', filter);
+    console.log('DB: update', doc);
     return this.db.models[collection]
       .updateOne(filter, doc, options)
       .then(res => {
-	console.log(res);
-	let  msg = `${res.length} object(s) updated to collection ${collection}`;
+	let  msg = `${res.nModified} object(s) updated to collection ${collection}`;
 	console.log('DB:', msg);
 	return msg;
       });
@@ -95,16 +103,28 @@ class AlanaDB {
     return this.findOneInCollection({name}, projection);
   }
   
-  findDialogByPrefix(prefix) {
-    return this.findOneInCollection({prefix}, {}, 'dialogs');
+  findDialogByPrefix(prefix, projection={}) {
+    return this.findOneInCollection({prefix}, projection, 'dialogs');
   }
 
+  findOneDialogListen() {
+    return this.findOneInCollection({listen: true}, {}, 'dialogs');
+  }
+
+  findOneDialogTalk() {
+    return this.findOneInCollection({talk: true}, {}, 'dialogs');
+  }
+  
   removeConfigAndReturn(configToRemove) {
     return this.findOneAndDeleteInCollection(configToRemove);
   }
 
   removeDialog(configToRemove) {
     return this.deleteInCollection(configToRemove, {}, 'dialogs');
+  }
+
+  updateOneDialog(filter, doc, options={}) {
+    return this.updateOneInCollection(filter, doc, options, 'dialogs');
   }
 }
 
