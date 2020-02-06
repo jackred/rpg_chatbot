@@ -44,14 +44,14 @@ function requestAlana(question, requestDialog, requestConfig) {
 }
 
 
-async function answer(message, text, db, client) {
+async function answer(message, text, db, client, tts) {
   const requestDialog = await db.findDialogByPrefix(message.content[0]);
   console.log( `INFO: dialog prefix found: ${requestDialog !== null}`);
   if (requestDialog !== null) { // else not a prefix, regular message
     const requestConfig = await db.findByIdConfig(requestDialog.config);
     const res = await requestAlana(message.content.substr(1), requestDialog, requestConfig);
     message.channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_name, requestConfig.name));
-    if (requestDialog.talk) { AlanaVoice.readAnswer(res.result, client); }
+    if (requestDialog.talk) { AlanaVoice.readAnswer(res.result, client, tts); }
   }
 }
 

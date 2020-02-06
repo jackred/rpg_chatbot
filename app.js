@@ -4,6 +4,7 @@ const config = require('./config.json');
 const AlanaDB = require('./src/AlanaDB');
 const AlanaController = require('./src/AlanaController');
 const AlanaCommand = require('./src/AlanaCommand');
+const AlanaTTS = require('./src/AlanaTTS');
 
 // module
 const AlanaRequest = require('./src/AlanaRequest');
@@ -14,6 +15,8 @@ const AlanaDialog = require('./src/AlanaDialog');
 
 
 let database = new AlanaDB();
+let tts = new AlanaTTS();
+
 
 const client = new Discord.Client();
 client.on('ready', () => {
@@ -153,7 +156,7 @@ let cmd = new AlanaCommand(
 );
 
 
-let controller = new AlanaController(client, cmd, {}, {}, database);
+let controller = new AlanaController(client, cmd, {}, {}, database, tts);
 
 
 

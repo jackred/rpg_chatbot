@@ -3,11 +3,12 @@
 const config = require('../config.json');
 
 class AlanaController {
-  constructor(client, command, reaction, vocalMessage,  db) {
+  constructor(client, command, reaction, vocalMessage,  db, tts) {
     this.client = client;
     this.command = command;
     this.reaction = reaction;
     this.db = db;
+    this.tts = tts;
     this.createHandler();
   }
 
@@ -53,7 +54,7 @@ class AlanaController {
 	this.handleCommand(command.subCommand[parsed.first], message, parsed.rest);
       }
     }
-    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db, this.client)), message);// some action can trigger command AND args
+    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db, this.client, this.tts)), message);// some action can trigger command AND args
   }
 
   catchError(channel, error){

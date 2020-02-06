@@ -1,7 +1,6 @@
 'use strict';
 
 const exec = require('child_process').exec;
-const fs = require('fs').promises;
 
 function checkUserInVoiceChannel(member) {
   return member.voiceChannel !== undefined;
@@ -68,14 +67,11 @@ function makeMemberJoinInChannel(member, client) {
 }
 
 
-function readAnswer(answer, client, voiceConnections) {
-  if ((voiceConnections === undefined)) {
-    voiceConnections = getVoiceConnection(client);
+function readAnswer(answer, client, tts, voiceConnection) {
+ if ((voiceConnection === undefined)) {
+    voiceConnection = getVoiceConnection(client);
   }
-  exec('espeak -w ./test.wav -s 120 -v english "' + answer + '"', (err, std, ste) => {
-    const dispatcher = voiceConnections.playFile('./test.wav');
-    dispatcher.on('end', end => console.log('INFO: finish speaking'));
-  });
+  tts.speak(answer, voiceConnection);
 }
 
 module.exports = { 
