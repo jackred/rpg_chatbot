@@ -1,7 +1,5 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
-// const exec = require('child_process').exec;
-// const fs = require('fs').promises;
 // class
 const AlanaDB = require('./src/AlanaDB');
 const AlanaController = require('./src/AlanaController');
@@ -135,30 +133,6 @@ let dialogCommand = new AlanaCommand(
 
 
 
-// console.log(std.length);
-// fs.writeFile("./test.wav", std)
-// 	.then((err) => {
-// 	  if (err) throw err;
-// 	  console.log('The file has been saved!');
-// 	})
-// 	.then(_ => {
-// console.log('hey');
-// console.log(voiceChannel);
-
-// let testCommand = new AlanaCommand(
-//   (msg, text, db) => {
-//     console.log('s');
-//     exec('espeak -w ./test.wav -s 120 -v english "' + text+ '"', (err, std, ste) => {
-//       var voiceChannel = msg.member.voiceChannel;
-//       voiceChannel.join()
-// 	.then(connection => {
-// 	  const dispatcher = connection.playFile('./test.wav');
-// 	  dispatcher.on('end', end => voiceChannel.leave());
-// 	})
-// 	.catch(err => console.log(err));
-//     });
-//   });
-
 // general command
 let generalPrefixCmd = new AlanaCommand(
   () => console.log("INFO: Prefix general called"),
@@ -179,7 +153,7 @@ let cmd = new AlanaCommand(
 );
 
 
-let controller = new AlanaController(client, cmd, {}, database);
+let controller = new AlanaController(client, cmd, {}, {}, database);
 
 
 

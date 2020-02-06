@@ -2,6 +2,7 @@
 
 const request = require('request-promise-native');
 const AlanaBuildMessage = require('./AlanaBuildMessage');
+const AlanaVoice = require('./AlanaVoice');
 const config = require('../config.json');
 
 
@@ -50,6 +51,7 @@ async function answer(message, text, db, client) {
     const requestConfig = await db.findByIdConfig(requestDialog.config);
     const res = await requestAlana(message.content.substr(1), requestDialog, requestConfig);
     message.channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_name, requestConfig.name));
+    if (requestDialog.talk) { AlanaVoice.readAnswer(res.result, client); }
   }
 }
 

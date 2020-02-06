@@ -3,15 +3,27 @@
 const config = require('../config.json');
 
 class AlanaController {
-  constructor(client, command, reaction, db) {
+  constructor(client, command, reaction, vocalMessage,  db) {
     this.client = client;
     this.command = command;
     this.reaction = reaction;
     this.db = db;
+    this.createHandler();
+  }
+
+  createHandler() {
     this.client.on('message', this.handleMessage.bind(this));
+    this.client.on('guildMemberSpeaking', this.handleVocalMessage.bind(this));
+    //this.client.on('messageReactionAdd', this.handleReaction.bind(this));
+    //this.client.on('messageReactionRemove', this.handleReaction.bind(this));
   }
   
   handleReaction(){}
+
+
+  handleVocalMessage(member, speaking){
+    console.log(member.displayName, "is talking?", speaking);
+  }
 
   async catchErrorCommand(fn, message){
     try {

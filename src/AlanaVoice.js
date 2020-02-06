@@ -1,11 +1,7 @@
 'use strict';
 
-// function VoiceEventHandler(oldMember, newMember) {
-//   console.log(newMember);
-// }
-
-// VoiceEventHandler.setListen = function(listen) { this.listen = listen; };
-// VoiceEventHandler.setTalk = function(talk) { this.talk = talk; };
+const exec = require('child_process').exec;
+const fs = require('fs').promises;
 
 function checkUserInVoiceChannel(member) {
   return member.voiceChannel !== undefined;
@@ -13,7 +9,9 @@ function checkUserInVoiceChannel(member) {
 
 
 function joinChannel(channel) {
-  channel.join().then(d => console.log(`INFO! joined ${d.channel.name}`));
+  channel.join().then(d => {
+    console.log(`INFO! joined ${d.channel.name}`);
+  });
 }
 
 
@@ -60,14 +58,30 @@ function isInVoiceChannel(client) {
 }
 
 
+function getVoiceConnection(client) {
+  return client.voiceConnections.first();
+}
+
+
 function makeMemberJoinInChannel(member, client) {
   member.setVoiceChannel(getVoiceChannel(client));
 }
 
 
+function readAnswer(answer, client, voiceConnections) {
+  if ((voiceConnections === undefined)) {
+    voiceConnections = getVoiceConnection(client);
+  }
+  exec('espeak -w ./test.wav -s 120 -v english "' + answer + '"', (err, std, ste) => {
+    const dispatcher = voiceConnections.playFile('./test.wav');
+    dispatcher.on('end', end => console.log('INFO: finish speaking'));
+  });
+}
+
 module.exports = { 
   isInVoiceChannel,
   makeMemberJoinInChannel,
   joinMemberInChannel,
-  leaveChannelBotIsIn
+  leaveChannelBotIsIn,
+  readAnswer
 };
