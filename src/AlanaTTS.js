@@ -14,7 +14,7 @@ class AlanaTTS {
       authenticator: new IamAuthenticator({ apikey: configTTS.apiKey }),
       url: configTTS.urlAuth
     });
-    this.fileName = 'answer.wav';
+    this.fileName = 'answer.opus';
   }
 
   playStream(stream, voiceConnection) {
@@ -25,7 +25,7 @@ class AlanaTTS {
   buildParam(text) {
     return {
       text: text,
-      accept: 'audio/wav',
+      accept: 'audio/opus',
       voice: configTTS.voice,
     };
   }
