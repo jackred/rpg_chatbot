@@ -1,4 +1,4 @@
-FROM tarampampam/node:latest
+FROM node:10
 WORKDIR /usr/src/rpg_bot_build
 COPY package*.json ./
 RUN npm install
