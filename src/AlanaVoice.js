@@ -1,5 +1,8 @@
 'use strict';
 
+const AlanaSingleSilence = require('./AlanaSingleSilence');
+
+
 function checkUserInVoiceChannel(member) {
   return member.voice.channel !== null;
 }
@@ -8,6 +11,10 @@ function checkUserInVoiceChannel(member) {
 function joinChannel(channel) {
   channel.join().then(d => {
     console.log(`INFO! joined ${d.channel.name}`);
+    const dispatcher = d.play(new AlanaSingleSilence(), { type: 'opus' });
+    dispatcher.once('finish', _ => {
+      console.log('INFO: finished playing silence');
+    });
   });
 }
 
