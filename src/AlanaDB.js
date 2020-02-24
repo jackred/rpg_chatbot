@@ -21,7 +21,7 @@ class AlanaDB {
   }
   
   async initDb() {
-    //this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true});
+    //this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true, useUnifiedTopology: true});
     this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true, useUnifiedTopology: true});
     this.db.model('configs', configSchema);
     this.db.model('dialogs', dialogSchema);

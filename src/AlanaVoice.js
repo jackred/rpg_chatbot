@@ -1,9 +1,7 @@
 'use strict';
 
-const exec = require('child_process').exec;
-
 function checkUserInVoiceChannel(member) {
-  return member.voiceChannel !== undefined;
+  return member.voice.channel !== null;
 }
 
 
@@ -23,7 +21,7 @@ function leaveChannel(channel) {
 
 
 function leaveChannelBotIsIn(client) {
-  const connections = client.voiceConnections.first();
+  const connections = client.voice.connections.first();
   if (connections !== undefined) {
     leaveChannel(connections.channel);
   }  
@@ -31,13 +29,13 @@ function leaveChannelBotIsIn(client) {
 
 
 function leaveAllChannel(client) {
-  client.voiceConnections.forEach(c => leaveChannel(c));
+  client.voice.connections.forEach(c => leaveChannel(c));
 }
 
 
 function joinMemberInChannel(member) {
   if (!checkUserInVoiceChannel(member)) { throw `${member.displayName} isn't in a VoiceChannel`; }
-  joinChannel(member.voiceChannel);
+  joinChannel(member.voice.channel);
 }
 
 
@@ -48,31 +46,33 @@ function leaveMemberInChannel(member) {
 
 
 function getVoiceChannel(client) {
-  return client.voiceConnections.first().channel;
+  return client.voice.connections.first().channel;
 }
 
 
 function isInVoiceChannel(client) {
-  return client.voiceConnections.size !== 0;
+  return client.voice.connections.size !== 0;
 }
 
-
+// assume there's only one connection, on the server
+// if not, there should be a function to get the one on the current server
 function getVoiceConnection(client) {
-  return client.voiceConnections.first();
+  return client.voice.connections.first();
 }
 
 
 function makeMemberJoinInChannel(member, client) {
-  member.setVoiceChannel(getVoiceChannel(client));
+  member.voice.setChannel(getVoiceChannel(client));
 }
 
 
 function readAnswer(answer, client, tts, voiceConnection) {
- if ((voiceConnection === undefined)) {
+  if ((voiceConnection === undefined)) {
     voiceConnection = getVoiceConnection(client);
   }
   tts.speak(answer, voiceConnection);
 }
+
 
 module.exports = { 
   isInVoiceChannel,

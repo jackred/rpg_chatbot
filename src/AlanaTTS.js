@@ -14,11 +14,11 @@ class AlanaTTS {
       authenticator: new IamAuthenticator({ apikey: configTTS.apiKey }),
       url: configTTS.urlAuth
     });
-    this.fileName = 'answer.opus';
+    this.fileName = 'answer.ogg';
   }
 
-  playStream(stream, voiceConnection) {
-    const dispatcher = voiceConnection.playStream(stream);
+  play(resource, voiceConnection) {
+    const dispatcher = voiceConnection.play(resource);
     dispatcher.on('end', end => console.log('INFO: finished speaking'));
   }
 
@@ -38,26 +38,22 @@ class AlanaTTS {
     return res.result.pipe(fs.createWriteStream(this.fileName));
   }
   
-  speakStream(text, voiceConnection) {
-    const params = this.buildParam(text);
-    this.requestApi(params).then(res => {
-      this.playStream(res.result, voiceConnection);
-    });
-  }
-
   speakFile(text, voiceConnection) {
     const params = this.buildParam(text);
     this.requestApi(params).then(res => {
       const stream = this.writeFile(res);
       stream.on('finish', d => {
-	console.log('finish');
-	voiceConnection.playFile(this.fileName);
+	console.log('INFO: finished writing file');
+	this.play(this.filename, voiceConnection);
       });
     });
   }
 
   speak(text, voiceConnection) {
-    this.speakStream(text, voiceConnection);
+    const params = this.buildParam(text);
+    this.requestApi(params).then(res => {
+       this.play(res.result, voiceConnection);
+    });
   }
 }
 

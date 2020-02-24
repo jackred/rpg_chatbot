@@ -1,10 +1,10 @@
 'use strict';
 
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed,  } = require('discord.js');
 
 
 function buildEmbedAnswer(text, author, configName)  {
-  let embed = new RichEmbed()
+  let embed = new MessageEmbed()
       .setAuthor(author)
       .setColor('#AFFF00')
       .setDescription('**' + text + '**')
@@ -14,7 +14,7 @@ function buildEmbedAnswer(text, author, configName)  {
 }
 
 function buildEmbedListTemplate(title) {
-  let embed = new RichEmbed()
+  let embed = new MessageEmbed()
       .setColor('#44FF11')
       .setTimestamp()
       .setTitle(title);
@@ -32,14 +32,15 @@ function buildFieldConfig(conf) {
     }
     return JSON.stringify(d);
   }).join(', ')).join('\n');
-  return [`**${title}**`, value];
+  return {name: `**${title}**`, value, inline: false};
 }
 
 function buildFieldsConfig(configs, embed) {
+  let fields = [];
   for (let conf of configs) {
-    const field = buildFieldConfig(conf);
-    embed.addField(...field);
+    fields.push(buildFieldConfig(conf));
   }
+  embed.addFields(fields);
   return embed;
 }
 
@@ -54,15 +55,16 @@ function buildFieldDialog(dial, confName) {
   delete dial.prefix;
   delete dial.config;
   const value = Object.keys(dial).map(k => k + ': '+ JSON.stringify(dial[k])).join('\n');
-  return [`**${title}**`, value];
+  return {name: `**${title}**`, value, inline: false};
 }
 
 async function buildFieldsDialog(dialogs, embed, db) {
+  let fields = [];
   for (let dial of dialogs) {
     const confName = await db.findByIdConfig(dial.config);
-    const field = buildFieldDialog(dial, confName.name);
-    embed.addField(...field);
+    fields.push(buildFieldDialog(dial, confName.name));
   }
+  embed.addFields(fields);
   return embed;
 }
 
