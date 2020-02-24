@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:latest
 WORKDIR /usr/src/rpg_bot_build
 COPY package*.json ./
 RUN npm install
