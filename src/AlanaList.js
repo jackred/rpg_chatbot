@@ -23,7 +23,7 @@ function filter(reaction, user){
 
 
 async function onCollect(emoji, message, i, getList) {
-  if ((emoji.name === emojiPrevious) && (i >= 0)) {
+  if (emoji.name === emojiPrevious) {
     const embed = await getList(i-1);
     if (embed.fields.length !== 0) {
       message.edit(embed);

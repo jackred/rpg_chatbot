@@ -21,8 +21,8 @@ class AlanaDB {
   }
   
   async initDb() {
-    //this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true, useUnifiedTopology: true});
-    this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true, useUnifiedTopology: true});
+    this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true, useUnifiedTopology: true});
+    //this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true, useUnifiedTopology: true});
     this.db.model('configs', configSchema);
     this.db.model('dialogs', dialogSchema);
   }
@@ -55,10 +55,10 @@ class AlanaDB {
     console.log('DB: update', doc);
     return this.db.models[collection]
       .updateOne(filter, doc, options)
-      .then(res => {
-	let  msg = `${res.nModified} object(s) updated to collection ${collection}`;
+      .then(updatedObject => {
+	let  msg = `${updatedObject.nModified} object(s) updated to collection ${collection}`;
 	console.log('DB:', msg);
-	return msg;
+	return  msg;
       });
   }
 

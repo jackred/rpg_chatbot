@@ -1,14 +1,17 @@
 'use strict';
 
 const config = require('../config.json');
+const AlanaSTTWrapper = require('./AlanaSTTWrapper');
+const AlanaVoice = require('./AlanaVoice');
 
 class AlanaController {
-  constructor(client, command, reaction, vocalMessage,  db, tts) {
+  constructor(client, command, reaction, vocalMessage,  db, tts, stt) {
     this.client = client;
     this.command = command;
     this.reaction = reaction;
     this.db = db;
     this.tts = tts;
+    this.stt = stt;
     this.createHandler();
   }
 
@@ -22,8 +25,16 @@ class AlanaController {
   handleReaction(){}
 
 
-  handleVocalMessage(member, speaking){
-    console.log(member.displayName, "is talking?", speaking);
+  async handleVocalMessage(member, speaking){
+    const listenDialog = await this.db.findOneDialogListen();
+    if (listenDialog.listen) {
+      const voiceConnection = AlanaVoice.getVoiceConnection(this.client);
+      try{
+	AlanaSTTWrapper.listen(speaking, member, voiceConnection, listenDialog, [this.client, this.db, this.tts, this.stt]);
+      } catch (error) {
+	this.catchError(this.client.channels.resolve(config.default_channel), error);
+      }
+    }
   }
 
   async catchErrorCommand(fn, message){
@@ -54,7 +65,7 @@ class AlanaController {
 	this.handleCommand(command.subCommand[parsed.first], message, parsed.rest);
       }
     }
-    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db, this.client, this.tts)), message);// some action can trigger command AND args
+    this.catchErrorCommand((msg => command.action.call(command, msg, text, this.db, this.client, this.tts, this.stt)), message);// some action can trigger command AND args
   }
 
   catchError(channel, error){

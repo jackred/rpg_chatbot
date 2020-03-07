@@ -1,5 +1,7 @@
 'use strict';
 
+// todo
+// make it individual from the voice request, only tts / stt
 
 const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
 const fs = require('fs');
@@ -14,7 +16,7 @@ class AlanaTTS {
       authenticator: new IamAuthenticator({ apikey: configTTS.apiKey }),
       url: configTTS.urlAuth
     });
-    this.fileName = 'answer.ogg';
+    this.fileName = './test/answer.ogg';
   }
 
   play(resource, voiceConnection) {

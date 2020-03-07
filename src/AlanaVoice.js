@@ -1,7 +1,7 @@
 'use strict';
 
 const AlanaSingleSilence = require('./AlanaSingleSilence');
-
+const AlanaSTTWrapper = require('./AlanaSTTWrapper.js');
 
 function checkUserInVoiceChannel(member) {
   return member.voice.channel !== null;
@@ -15,6 +15,7 @@ function joinChannel(channel) {
     dispatcher.once('finish', _ => {
       console.log('INFO: finished playing silence');
     });
+    d.receiver.on('debug', e => console.log('ERROR', e));
   });
 }
 
@@ -53,6 +54,7 @@ function leaveMemberInChannel(member) {
 
 
 function getVoiceChannel(client) {
+  console.log(client);
   return client.voice.connections.first().channel;
 }
 
@@ -81,10 +83,12 @@ function readAnswer(answer, client, tts, voiceConnection) {
 }
 
 
+
 module.exports = { 
   isInVoiceChannel,
   makeMemberJoinInChannel,
   joinMemberInChannel,
   leaveChannelBotIsIn,
-  readAnswer
+  readAnswer,
+  getVoiceConnection
 };

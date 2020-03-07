@@ -59,7 +59,6 @@ async function toggleDialog(message, text, db, client, resDialog, oneP, twoP) {
     await db.updateOneDialog({[oneP]: true}, {'$set': {[oneP]: false}});
   }
   await db.updateOneDialog({prefix: text}, {'$set': {[oneP]: !resDialog[oneP]}});
-  
 }
 
 
@@ -69,8 +68,9 @@ async function talkToggleDialog(message, text, db, client) {
   message.channel.send(await AlanaBuildMessage.buildEmbedDialog(await db.findDialogByPrefix(text, {"_id": 0, "__v": 0}), db));
 }
 
-async function listenToggleDialog(message, text, db, client) {
-  const resDialog = await db.findDialogByPrefix(text);
+
+async function listenToggleDialog(message, text, db, client, tts, stt) {
+  let resDialog = await db.findDialogByPrefix(text);
   await toggleDialog(message,text, db, client, resDialog, 'listen', 'talk');
   message.channel.send(await AlanaBuildMessage.buildEmbedDialog(await db.findDialogByPrefix(text, {"_id": 0, "__v": 0}), db));
 }

@@ -44,18 +44,30 @@ function requestAlana(question, requestDialog, requestConfig) {
 }
 
 
+async function answerWithDialog(requestDialog, text, client, channel, db, tts) {
+  const requestConfig = await db.findByIdConfig(requestDialog.config);
+  const res = await requestAlana(text, requestDialog, requestConfig);
+  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_name, requestConfig.name));
+  console.log("INFO: answer", res.result);
+  console.log('INFO: tts', tts);
+
+  if (requestDialog.talk) {
+    console.log('trying to speak');
+    AlanaVoice.readAnswer(res.result, client, tts);
+  }
+}
+
+
 async function answer(message, text, db, client, tts) {
-  const requestDialog = await db.findDialogByPrefix(message.content[0]);
+  const requestDialog = await db.findDialogByPrefix(text[0]);
   console.log( `INFO: dialog prefix found: ${requestDialog !== null}`);
   if (requestDialog !== null) { // else not a prefix, regular message
-    const requestConfig = await db.findByIdConfig(requestDialog.config);
-    const res = await requestAlana(message.content.substr(1), requestDialog, requestConfig);
-    message.channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_name, requestConfig.name));
-    if (requestDialog.talk) { AlanaVoice.readAnswer(res.result, client, tts); }
+    answerWithDialog(requestDialog, text.substr[1], client, message.channel, db, tts);
   }
 }
 
 
 module.exports = { 
-  answer
+  answer,
+  answerWithDialog
 };

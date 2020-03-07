@@ -3,13 +3,25 @@
 const { MessageEmbed,  } = require('discord.js');
 
 
-function buildEmbedAnswer(text, author, configName)  {
+function buildEmbedAnswerTemplate(text, author, footer, color='#AFFF00')  {
   let embed = new MessageEmbed()
-      .setAuthor(author)
-      .setColor('#AFFF00')
+      .setAuthor(...(typeof author === 'string') ? [author] : author)
+      .setColor(color)
       .setDescription('**' + text + '**')
       .setTimestamp()
-      .setFooter(configName);
+      .setFooter(footer);
+  return embed;
+}
+
+
+function buildEmbedAnswer(text, authorName, configName)  {
+  let embed = buildEmbedAnswerTemplate(text, authorName, configName);
+  return embed;
+}
+
+function buildEmbedSTTMessage(text, member, dialogName) {
+  let embed = buildEmbedAnswerTemplate(text, [member.user.username, member.user.avatarURL()], dialogName, member.displayHexColor);
+  embed.setTitle('STT message');
   return embed;
 }
 
@@ -82,7 +94,8 @@ async function buildEmbedDialog(dialog, db) {
 
 module.exports = { 
   buildEmbedAnswer,
+  buildEmbedSTTMessage,
   buildEmbedListConfig,
   buildEmbedListDialog,
-  buildEmbedDialog
+  buildEmbedDialog,
 };
