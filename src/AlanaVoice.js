@@ -75,11 +75,11 @@ function makeMemberJoinInChannel(member, client) {
 }
 
 
-function readAnswer(answer, client, tts, voiceConnection) {
+function readAnswer(answer, voice, client, tts, voiceConnection) {
   if ((voiceConnection === undefined)) {
     voiceConnection = getVoiceConnection(client);
   }
-  tts.speak(answer, voiceConnection);
+  tts.speak(answer, voice, voiceConnection);
 }
 
 

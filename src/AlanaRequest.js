@@ -53,7 +53,7 @@ async function answerWithDialog(requestDialog, text, client, channel, db, tts) {
 
   if (requestDialog.talk) {
     console.log('trying to speak');
-    AlanaVoice.readAnswer(res.result, client, tts);
+    AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
   }
 }
 
@@ -71,3 +71,5 @@ module.exports = {
   answer,
   answerWithDialog
 };
+
+

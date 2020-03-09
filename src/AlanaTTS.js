@@ -24,11 +24,11 @@ class AlanaTTS {
     dispatcher.on('end', end => console.log('INFO: finished speaking'));
   }
 
-  buildParam(text) {
+  buildParam(text, voice) {
     return {
       text: text,
       accept: 'audio/opus',
-      voice: configTTS.voice,
+      voice: voice,
     };
   }
 
@@ -51,8 +51,8 @@ class AlanaTTS {
     });
   }
 
-  speak(text, voiceConnection) {
-    const params = this.buildParam(text);
+  speak(text, voice, voiceConnection) {
+    const params = this.buildParam(text, voice);
     this.requestApi(params).then(res => {
        this.play(res.result, voiceConnection);
     });
