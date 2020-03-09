@@ -62,7 +62,7 @@ async function answer(message, text, db, client, tts) {
   const requestDialog = await db.findDialogByPrefix(text[0]);
   console.log( `INFO: dialog prefix found: ${requestDialog !== null}`);
   if (requestDialog !== null) { // else not a prefix, regular message
-    answerWithDialog(requestDialog, text.substr[1], client, message.channel, db, tts);
+    answerWithDialog(requestDialog, text.substr(1), client, message.channel, db, tts);
   }
 }
 
