@@ -1,10 +1,21 @@
 {
   "token": "<Discord Token>",
+  "tts": {
+    "apiKey": "<Watson TTS API Key>",
+    "urlAuth": "<Watson TTS URL>",
+  },
+  "stt": {
+    "apiKey": "<Watson STT API Key>",
+    "urlAuth": "<Watson STT URL>",
+    "model": "en-US_BroadbandModel"
+  },
   "prefix": {"general": "++"},
   "alana": "<Alana IP>",
   "help": "help",
   "project": "<XX>",
   "projectId": "CA2020",
   "mongo": "mongodb://<IP>:<PORT>/alana",
-  "user_id": "<NAME_ID>"
+  "user_id": "<NAME_ID>",
+  "default_channel": "<Discord Channel ID>"
+
 }
