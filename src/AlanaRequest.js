@@ -17,6 +17,7 @@ function buildRequest(question, data, session_id) {
   data.user_id = config.user_id;
   data.projectId = config.projectId;
   data.session_id = session_id;
+  data.overrides.BOT_TIMEOUT = 30;
   return data;
 }
 
