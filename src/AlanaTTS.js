@@ -16,12 +16,6 @@ class AlanaTTS {
       authenticator: new IamAuthenticator({ apikey: configTTS.apiKey }),
       url: configTTS.urlAuth
     });
-    this.fileName = './test/answer.ogg';
-  }
-
-  play(resource, voiceConnection) {
-    const dispatcher = voiceConnection.play(resource);
-    dispatcher.on('end', end => console.log('INFO: finished speaking'));
   }
 
   buildParam(text, voice) {
@@ -32,30 +26,11 @@ class AlanaTTS {
     };
   }
 
-  requestApi(params) {
-    return this.textToSpeech.synthesize(params);
-  }
-
-  writeFile(res) {
-    return res.result.pipe(fs.createWriteStream(this.fileName));
-  }
-  
-  speakFile(text, voiceConnection) {
-    const params = this.buildParam(text);
-    this.requestApi(params).then(res => {
-      const stream = this.writeFile(res);
-      stream.on('finish', d => {
-	console.log('INFO: finished writing file');
-	this.play(this.filename, voiceConnection);
-      });
-    });
-  }
-
-  speak(text, voice, voiceConnection) {
+  async translate(text, voice) {
     const params = this.buildParam(text, voice);
-    this.requestApi(params).then(res => {
-       this.play(res.result, voiceConnection);
-    });
+    const response =  await this.textToSpeech.synthesize(params);
+    console.log("INFO: received voice stream:");
+    return response.result;
   }
 }
 

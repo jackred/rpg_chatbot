@@ -2,6 +2,8 @@
 
 const AlanaSingleSilence = require('./AlanaSingleSilence');
 const AlanaSTTWrapper = require('./AlanaSTTWrapper.js');
+const AlanaTTSWrapper = require('./AlanaTTSWrapper.js');
+
 
 function checkUserInVoiceChannel(member) {
   return member.voice.channel !== null;
@@ -79,7 +81,7 @@ function readAnswer(answer, voice, client, tts, voiceConnection) {
   if ((voiceConnection === undefined)) {
     voiceConnection = getVoiceConnection(client);
   }
-  tts.speak(answer, voice, voiceConnection);
+  AlanaTTSWrapper.speak(answer, voice, voiceConnection, tts);
 }
 
 

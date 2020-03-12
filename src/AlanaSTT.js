@@ -29,7 +29,7 @@ class AlanaSTT {
   }
   
   // need to be a function out of stt
-  async translate(voiceConnection, user, speaking, resDialog, client, db, tts) {
+  async translate() {
     const params = this.buildParam();
     const response = await this.speechToText.recognize(params);
     console.log("INFO: received response:", JSON.stringify(response.result, null, 2));
