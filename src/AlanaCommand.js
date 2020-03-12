@@ -1,15 +1,17 @@
 'use string';
 
+const permission = require('../permission.json');
 const AlanaParser = require('./AlanaParser');
 
 class AlanaCommand {
   constructor(action, subCommand={},
-	      generalHelp='', help='', 
+	      generalHelp='', help='', perm=permission.level.default,
 	      parser=AlanaParser.defaultParser) {
     this.action = action; // function
     this.subCommand = subCommand; // map of Command
     this.generalHelp = (generalHelp === '') ? this.defaultGeneralHelp : generalHelp; // function > string
     this.help = (help === '') ? this.defaultHelp : help; // function > string
+    this.permission = perm; // int
     this.parser = parser; // fuction -> [string]
   }
   // todo: add a help function for `helpXXX`

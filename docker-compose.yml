@@ -6,6 +6,7 @@ services:
     build: .
     volumes:
       - ./config.json:/usr/src/rpg_bot_build/config.json
+      - ./permission.json:/usr/src/rpg_bot_build/permission.json
     restart: always
 
 networks:

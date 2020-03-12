@@ -1,5 +1,8 @@
 const Discord = require('discord.js');
+
+// configs
 const config = require('./config.json');
+const permission = require('./permission.json');
 
 // class
 const AlanaDB = require('./src/AlanaDB');
@@ -24,41 +27,41 @@ let stt = new AlanaSTT();
 const client = new Discord.Client();
 client.on('ready', () => {
   console.log('Starting!');
-  client.user.setActivity(`Listening to : ${config.prefix.general}`);
+  client.user.setActivity(`Listening to : ${config.prefix.dev}`);
 });
 
 // config command
 let createConfigCommand = new AlanaCommand(
   AlanaConfig.createConfig,
   {},
-  () => `\`${config.prefix.general}config create <JSON>\n\``,
+  () => `\`${config.prefix.dev}config create <JSON>\n\``,
   function () {
-    return this.generalHelp() + 'Create a configuration. Configuration pecify the bots to use in the request.\nE.g:\n `'+ config.prefix.general +'config create {JSON TEMPLATE}`\n';
+    return this.generalHelp() + 'Create a configuration. Configuration pecify the bots to use in the request.\nE.g:\n `'+ config.prefix.dev +'config create {JSON TEMPLATE}`\n';
   }
 );
 
 let deleteConfigCommand = new AlanaCommand(
   AlanaConfig.deleteConfig,
   {},
-  () => `\`${config.prefix.general}config delete <configuration name>\n\``,
+  () => `\`${config.prefix.dev}config delete <configuration name>\n\``,
   function () {
-    return this.generalHelp() + 'Delete a configuration, and all the dialog using it.  bot to use in the request.\nE.g:\n `'+ config.prefix.general +'config delete test_config`\n';
+    return this.generalHelp() + 'Delete a configuration, and all the dialog using it.  bot to use in the request.\nE.g:\n `'+ config.prefix.dev +'config delete test_config`\n';
   }
 );
 
 let getConfigCommand = new AlanaCommand(
   AlanaConfig.getConfig,
   {},
-  () => `\`${config.prefix.general}config get <name>\n\``,
+  () => `\`${config.prefix.dev}config get <name>\n\``,
   function () {
-    return this.generalHelp() + 'Print the JSON of the config named <name>. Useful to copy it.\nE.g:'+config.prefix.general+'config get config1\n';
+    return this.generalHelp() + 'Print the JSON of the config named <name>. Useful to copy it.\nE.g:'+config.prefix.dev+'config get config1\n';
   }
 );
 
 let templateConfigCommand = new AlanaCommand(
   AlanaConfig.printTemplate,
   {},
-  () => `\`${config.prefix.general}config template\n\``,
+  () => `\`${config.prefix.dev}config template\n\``,
   function () {
     return this.generalHelp() + 'Print a template of configuration\n';
   }
@@ -67,7 +70,7 @@ let templateConfigCommand = new AlanaCommand(
 let listConfigCommand = new AlanaCommand(
   AlanaConfig.listConfig,
   {},
-  () => `\`${config.prefix.general}config list\n\``,
+  () => `\`${config.prefix.dev}config list\n\``,
   function () {
     return this.generalHelp() + 'List all the configuration\n';
   }
@@ -77,7 +80,7 @@ let configCommand = new AlanaCommand(
   () => console.log("INFO: Config command called"),
   {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand, 'list': listConfigCommand, 'get': getConfigCommand},
   function() {
-    return `${config.prefix.general}\`config <subcomand>\`` + '\n'
+    return `${config.prefix.dev}\`config <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
   }
 );
@@ -86,7 +89,7 @@ let configCommand = new AlanaCommand(
 let listDialogCommand = new AlanaCommand(
   AlanaDialog.listDialog,
   {},
-  () => `\`${config.prefix.general}dialog list\n\``,
+  () => `\`${config.prefix.dev}dialog list\n\``,
   function () { // redundant
     return this.generalHelp() + 'List all the dialog\n';
   }
@@ -95,25 +98,25 @@ let listDialogCommand = new AlanaCommand(
 let startDialogCommand = new AlanaCommand(
   AlanaDialog.startDialog,
   {},
-  () => `\`${config.prefix.general}dialog start <prefix> <config name>\n\``,
+  () => `\`${config.prefix.dev}dialog start <prefix> <config name>\n\``,
   function () {
-    return this.generalHelp() + 'Start a dialog using a specific configuration. To talk to Alana, start your message with your <prefix>.\nE.g:\n `'+ config.prefix.general +'dialog start ! config_test`\n`!hello Alana`\n';
+    return this.generalHelp() + 'Start a dialog using a specific configuration. To talk to Alana, start your message with your <prefix>.\nE.g:\n `'+ config.prefix.dev +'dialog start ! config_test`\n`!hello Alana`\n';
   }
 );
 
 let endDialogCommand = new AlanaCommand(
   AlanaDialog.endDialog,
   {},
-  () => `\`${config.prefix.general}dialog end <prefix>\n\``,
+  () => `\`${config.prefix.dev}dialog end <prefix>\n\``,
   function () {
-    return this.generalHelp() + 'End a dialog (specify it by using the <prefix>).\nE.g:\n `'+ config.prefix.general +'dialog end !`\n';
+    return this.generalHelp() + 'End a dialog (specify it by using the <prefix>).\nE.g:\n `'+ config.prefix.dev +'dialog end !`\n';
   }
 );
 
 let talkDialogCommand = new AlanaCommand(
   AlanaDialog.talkToggleDialog,
   {},
-  () => `\`${config.prefix.general}dialog talk <prefix>\n\``,
+  () => `\`${config.prefix.dev}dialog talk <prefix>\n\``,
   function () {
     return this.generalHelp() + "Toggle the talk function. If it's true and the user is in a vocalChannel, the chatbot will join the user in the channel and read the next message with text to speech. If toggled to false, the bot will leave the channel.\n";
   }
@@ -122,7 +125,7 @@ let talkDialogCommand = new AlanaCommand(
 let listenDialogCommand = new AlanaCommand(
   AlanaDialog.listenToggleDialog,
   {},
-  () => `\`${config.prefix.general}dialog listen <prefix>\n\``,
+  () => `\`${config.prefix.dev}dialog listen <prefix>\n\``,
   function () {
     return this.generalHelp() + "Toggle the listen function. If it's true and the user is in a vocalChannel, the chatbot will join the user in the channel and listen to the user. If toggled to false, the bot will leave the channel.\n";
   }
@@ -132,29 +135,33 @@ let dialogCommand = new AlanaCommand(
   () => console.log("INFO: Dialog command called"),
   {'start': startDialogCommand, end: endDialogCommand, list: listDialogCommand, 'talk': talkDialogCommand, 'listen': listenDialogCommand}, 
   function() {
-    return `${config.prefix.general}\`dialog <subcomand>\`` + '\n'
+    return `${config.prefix.dev}\`dialog <subcomand>\`` + '\n'
       + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
   }
 );
 
 
 
-// general command
-let generalPrefixCmd = new AlanaCommand(
-  () => console.log("INFO: Prefix general called"),
+// dev command
+let devPrefixCmd = new AlanaCommand(
+  () => console.log("INFO: Dev prefix called"),
   {'dialog': dialogCommand, 'config': configCommand},
   function(){
-    return `General Command prefix: ${config.prefix.general}\n`
+    return `Dev Command prefix: ${config.prefix.dev}\n`
       + this.listSubCommand().map(d => `\`${d}\``).join(', ')
       + '\n';
   },
+  '',
+  permission.level.admins
 );
+
 
 let cmd = new AlanaCommand(
   AlanaRequest.answer,
-  {[config.prefix.general]: generalPrefixCmd},
+  {[config.prefix.dev]: devPrefixCmd},
   '',
   '',
+  permission.level.default,
   AlanaParser.prefixParser
 );
 

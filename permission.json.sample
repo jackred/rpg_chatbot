@@ -1,0 +1,18 @@
+{
+  "level": {"blacklist": -1, "default": 0, "admins": 3, "whitelist":1},
+  "admins": {
+    "roles": [],
+    "users": [],
+    "channels": []
+  },
+  "whitelist": {
+    "roles": [],
+    "users": [],
+    "channels": []
+  },
+  "blacklist": {
+    "roles": [],
+    "users": [],
+    "channels": []
+  }
+}
