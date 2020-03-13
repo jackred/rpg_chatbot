@@ -48,7 +48,7 @@ function requestAlana(question, requestDialog, requestConfig) {
 async function answerWithDialog(requestDialog, text, client, channel, db, tts) {
   const requestConfig = await db.findByIdConfig(requestDialog.config);
   const res = await requestAlana(text, requestDialog, requestConfig);
-  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_name, requestConfig.name));
+  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || res.bot_name, requestConfig.name));
   console.log("INFO: answer", res.result);
   console.log('INFO: tts', tts);
 
