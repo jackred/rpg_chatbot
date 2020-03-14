@@ -24,9 +24,9 @@ function getStreamUserSpeaking(user, voiceConnection) {
 
 async function handleVoiceMessage(member, listenDialog, client, db, tts, stt) {
   const textFromVoice = await stt.translate();
-  const default_channel = client.channels.resolve(config.default_channel);
-  default_channel.send(AlanaBuildMessage.buildEmbedSTTMessage(textFromVoice, member, listenDialog.prefix));
-  AlanaRequest.answerWithDialog(listenDialog, textFromVoice, client, default_channel, db, tts);
+  const defaultChannel = client.channels.resolve(config.defaultChannel);
+  defaultChannel.send(AlanaBuildMessage.buildEmbedSTTMessage(textFromVoice, member, listenDialog.prefix));
+  AlanaRequest.answerWithDialog(listenDialog, textFromVoice, client, defaultChannel, db, tts);
 }
 
 

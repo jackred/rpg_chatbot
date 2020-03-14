@@ -16,7 +16,8 @@ const AlanaRequest = require('./src/AlanaRequest');
 const AlanaParser = require('./src/AlanaParser');
 const AlanaConfig = require('./src/AlanaConfig');
 const AlanaDialog = require('./src/AlanaDialog');
-
+const AlanaGame = require('./src/AlanaGame');
+const AlanaGuildManager = require('./src/AlanaGuildManager');
 
 
 let database = new AlanaDB();
@@ -24,7 +25,7 @@ let tts = new AlanaTTS();
 let stt = new AlanaSTT();
 
 
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 client.on('ready', () => {
   console.log('Starting!');
   client.user.setActivity(`Listening to : ${config.prefix.dev}`);
@@ -80,8 +81,7 @@ let configCommand = new AlanaCommand(
   () => console.log("INFO: Config command called"),
   {'create': createConfigCommand, 'delete': deleteConfigCommand, 'template': templateConfigCommand, 'list': listConfigCommand, 'get': getConfigCommand},
   function() {
-    return `${config.prefix.dev}\`config <subcomand>\`` + '\n'
-      + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
+    return `\`${config.prefix.dev}config <subcomand>\`\n${this.listSubCommand().join(', ')}\n`;
   }
 );
 
@@ -135,11 +135,9 @@ let dialogCommand = new AlanaCommand(
   () => console.log("INFO: Dialog command called"),
   {'start': startDialogCommand, end: endDialogCommand, list: listDialogCommand, 'talk': talkDialogCommand, 'listen': listenDialogCommand}, 
   function() {
-    return `${config.prefix.dev}\`dialog <subcomand>\`` + '\n'
-      + this.listSubCommand().join(', ') + '\n'; // counter productive, but the indentation is ugly other ways
+    return `\`${config.prefix.dev}dialog <subcomand>\`\n${this.listSubCommand().join(', ')}\n`;
   }
 );
-
 
 
 // dev command
@@ -147,27 +145,86 @@ let devPrefixCmd = new AlanaCommand(
   () => console.log("INFO: Dev prefix called"),
   {'dialog': dialogCommand, 'config': configCommand},
   function(){
-    return `Dev Command prefix: ${config.prefix.dev}\n`
-      + this.listSubCommand().map(d => `\`${d}\``).join(', ')
-      + '\n';
+    return `Dev Command prefix: ${config.prefix.dev}\n${this.listSubCommand().map(d => `\`${d}\``).join(', ')}\n`;
   },
   '',
   permission.level.admins
 );
 
 
-let cmd = new AlanaCommand(
+//game commands
+let startGameCommand = new AlanaCommand(
+  AlanaGame.startGame,
+  {}, 
+  () => `\`${config.prefix.game}start_game\n\``,
+  function () {
+    return this.generalHelp() + "Start a normal game using fixed dialog.";
+  }
+);
+
+let startGameGPT2Command = new AlanaCommand(
+  AlanaGame.startGameGPT2,
+  {}, 
+  () => `\`${config.prefix.game}start_game_gpt2\n\``,
+  function () {
+    return this.generalHelp() + "Start a normal game using gpt2 dialog. There could only be one gpt2 game at a time, go it may be already used when you try. Please try another time. There's a timeout of 5 mins without activity on this type of dialog.";
+  }
+);
+
+let startGameGuidedCommand = new AlanaCommand(
+  AlanaGame.startGameGuided,
+  {}, 
+  () => `\`${config.prefix.game}start_game_guided\n\``,
+  function () {
+    return this.generalHelp() + "Start a normal game using guided dialog. Every possible option will be disclaused to you when the game master will give you description.";
+  }
+);
+
+let endGameCommand = new AlanaCommand(
+  AlanaGame.endGame,
+  {}, 
+  () => `\`${config.prefix.game}end_game\n\``,
+  function () {
+    return this.generalHelp() + "Terminate any type of game. It will also close the channel you're in.";
+  }
+);
+
+// game command
+let gamePrefixCmd = new AlanaCommand(
+  () => console.log("INFO: Game prefix called"),
+  {
+    'start_game': startGameCommand,
+    'start_game_gpt2': startGameGPT2Command,
+    'start_game_guided': startGameGuidedCommand,
+    'end_game': endGameCommand
+  },
+  function(){
+    return `Game Command prefix: ${config.prefix.game}\n${this.listSubCommand().map(d => `\`${d}\``).join(', ')}\n`;
+  },
+);
+
+
+let cmdMessage = new AlanaCommand(
   AlanaRequest.answer,
-  {[config.prefix.dev]: devPrefixCmd},
+  {[config.prefix.dev]: devPrefixCmd, [config.prefix.game]: gamePrefixCmd},
   '',
   '',
-  permission.level.default,
+  permission.level.blacklist,
   AlanaParser.prefixParser
 );
 
 
-let controller = new AlanaController(client, cmd, {}, {}, database, tts, stt);
+let reactionPlay = new AlanaCommand(
+  AlanaGuildManager.createChannel,
+  {},
+  '',
+  '',
+  permission.level.blacklist
+);
 
+let reactionCmd = {'play': reactionPlay};
+
+let controller = new AlanaController(client, cmdMessage, reactionCmd, {}, database, tts, stt);
 
 
 client.login(config.token).then(() => console.log("We're in!")).catch((err) => console.log(err));

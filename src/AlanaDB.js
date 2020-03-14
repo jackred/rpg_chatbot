@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const config = require('../config.json');
 const configSchema = require('./model/configs');
 const dialogSchema = require('./model/dialogs');
+const channelSchema = require('./model/channels');
+const dialogGameSchema = require('./model/dialogsGame');
+const configGameSchema = require('./model/configsGame');
 
 /*
   /!\ TODO /!\
@@ -23,8 +26,13 @@ class AlanaDB {
   async initDb() {
     //this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true, useUnifiedTopology: true});
     this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true, useUnifiedTopology: true});
+    // less ugly way? TODO
     this.db.model('configs', configSchema);
     this.db.model('dialogs', dialogSchema);
+    this.db.model('channels', channelSchema);
+    this.db.model('configsGame', configSchema);
+    this.db.model('dialogsGame', configSchema);
+
   }
 
   findOneInCollection(filter={}, projection={}, collection='configs') {
@@ -95,6 +103,10 @@ class AlanaDB {
     return this.addInCollection(dialogToAdd, {}, 'dialogs');
   }
 
+  addChannel(channelToAdd) {
+    return this.addInCollection(channelToAdd, {}, 'channels');
+  }
+
   findByIdConfig(id) {
     return this.findOneInCollection(id);
   }
@@ -113,6 +125,10 @@ class AlanaDB {
 
   findOneDialogTalk() {
     return this.findOneInCollection({talk: true}, {}, 'dialogs');
+  }
+
+   findOneChannelByUserID (userID) {
+     return this.findOneInCollection({userID}, {}, 'channels');
   }
   
   removeConfigAndReturn(configToRemove) {
