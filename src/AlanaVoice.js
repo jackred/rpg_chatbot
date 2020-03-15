@@ -92,5 +92,6 @@ module.exports = {
   joinMemberInChannel,
   leaveChannelBotIsIn,
   readAnswer,
+  joinChannel,
   getVoiceConnection
 };

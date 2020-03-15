@@ -1,7 +1,9 @@
 'use strict';
 
+
 const permission = require('../permission.json');
 const config = require('../config.json');
+
 
 async function createChannel(reaction, user, db, client) {
   if ((!(reaction.message.pinned)) || (reaction.message.channel.id !== config.rulesChannel)) { return; }
@@ -39,6 +41,29 @@ async function createChannel(reaction, user, db, client) {
 }
 
 
+async function removeRoles(member, rolesID) {
+  await member.roles.remove(rolesID);
+}
+
+async function assignRoles(member, rolesID) {
+  await member.roles.add(rolesID);
+}
+
+
+async function removeSTTandTTSRoles(member) {
+  let roles = [config.tts.role, config.stt.role];
+  await removeRoles(member, roles);
+}
+
+async function assignSTTandTTSRoles(member, options) {
+  let roles = [];
+  if (options.talk.value) { roles.push(config.tts.role); }
+  if (options.listen.value) { roles.push(config.stt.role); }
+  await assignRoles(member, roles);
+}
+
 module.exports = { 
-  createChannel
+  createChannel,
+  assignSTTandTTSRoles,
+  removeSTTandTTSRoles
 };

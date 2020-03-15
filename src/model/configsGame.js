@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
-var configGameSchema = new mongoose.Schema(
+const configGameSchema = new mongoose.Schema(
   {
-    data: {
-      overrides: {
+    overrides: {
 	BOT_LIST: [{type: mongoose.Schema.Types.Mixed, required: true}],
 	PRIORITY_BOTS: [{type: mongoose.Schema.Types.Mixed, required: true}]
-      }
     }
   },
   {

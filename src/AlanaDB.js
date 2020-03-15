@@ -1,12 +1,16 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
 const config = require('../config.json');
+
 const configSchema = require('./model/configs');
 const dialogSchema = require('./model/dialogs');
 const channelSchema = require('./model/channels');
 const configGameSchema = require('./model/configsGame');
 const dialogGameSchema = require('./model/dialogsGame');
+
+const uniqueConfigGame = require('./model/configsGameUnique');
 
 /*
   /!\ TODO /!\
@@ -32,10 +36,16 @@ class AlanaDB {
     this.db.model('channels', channelSchema);
     this.db.model('configs_game', configGameSchema);
     this.db.model('dialogs_game', dialogGameSchema);
+    // add default config // reset
+    this.findOneAndUpdateInCollection({}, uniqueConfigGame, {upsert: true, useFindAndModify: false}, 'configs_game');
   }
 
+  findOneAndUpdateInCollection(filter={}, update={}, options={}, collection='configs') {
+    return this.db.models[collection].findOneAndUpdate(filter, update, options).exec();
+  }
+  
   findOneInCollection(filter={}, projection={}, collection='configs') {
-    console.log('to find', filter);
+    console.log('DB: to find', filter);
     return this.db.models[collection].findOne(filter, projection).lean().exec();
   }
 
@@ -48,8 +58,7 @@ class AlanaDB {
   }
 
   addInCollection(added={}, options={}, collection='configs') {
-    console.log('to add', added);
-    console.log(collection);
+    console.log('DB: to add', added);
     return this.db.models[collection]
       .insertMany(added, options)
       .then(res => {
@@ -92,6 +101,7 @@ class AlanaDB {
 	} else {
 	  msg = `no objects matched in collection ${collection}`;
 	}
+	console.log(`DB: ${msg}`);
 	return {deletedConfig, msg};
       });
   }
@@ -110,6 +120,10 @@ class AlanaDB {
 
   addDialogGame(dialogGameToAdd) {
     return this.addInCollection(dialogGameToAdd, {}, 'dialogs_game');
+  }
+
+  findConfigGame() {
+    return this.findOneInCollection({}, {'_id': 0, 'overrides': 1}, 'configs_game');
   }
 
   findByIdConfig(id) {
@@ -140,7 +154,7 @@ class AlanaDB {
     return this.findOneInCollection({"talk.value": true}, {}, 'dialogs_game');
   }
 
-  findOneDialogGameCGPT2() {
+  findOneDialogGameGPT2() {
     return this.findOneInCollection({"gpt2.value": true}, {}, 'dialogs_game');
   }
   
@@ -150,6 +164,10 @@ class AlanaDB {
   
   findOneChannelByUserID (userID) {
     return this.findOneInCollection({userID}, {}, 'channels');
+  }
+
+  findOneChannelByChannelID (channelID) {
+    return this.findOneInCollection({channelID}, {}, 'channels');
   }
   
   removeConfigAndReturn(configToRemove) {

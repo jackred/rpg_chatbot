@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var configSchema = new mongoose.Schema(
+const configSchema = new mongoose.Schema(
   {
     name: {type: String, required: true},
     data: {

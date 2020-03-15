@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var dialogGameSchema = new mongoose.Schema(
+const dialogGameSchema = new mongoose.Schema(
   {
     channelID: {type: String, require: true},
     listen: {

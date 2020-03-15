@@ -35,8 +35,7 @@ function buildOptions(question, dataBot, session_id, uri=config.alana) {
 }
 
 
-function requestAlana(question, requestDialog, requestConfig) {
-  const options = buildOptions(question, requestConfig.data, requestDialog.session_id);
+function requestAlana(options) {
   return request.post(options)
     .then(res => {
       console.log(`ANSWER: ${res.result}`, res);
@@ -46,13 +45,24 @@ function requestAlana(question, requestDialog, requestConfig) {
 }
 
 
+async function answerGame(text, channel, optionsDB, db, client, tts) {
+  const requestConfigGame = await db.findConfigGame();
+  const options = buildOptions(text, requestConfigGame, channel.id);
+  const res = await requestAlana(options);
+  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || res.bot_name, 'RPG_Bot'));
+  console.log("INFO: answer", res.result);
+  if (optionsDB.talk.value) {
+    console.log('trying to speak');
+    await AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
+  }
+}
+
 async function answerWithDialog(requestDialog, text, client, channel, db, tts) {
   const requestConfig = await db.findByIdConfig(requestDialog.config);
-  const res = await requestAlana(text, requestDialog, requestConfig);
+  const options = buildOptions(text, requestConfig.data, requestDialog.session_id);
+  const res = await requestAlana(options);
   channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || res.bot_name, requestConfig.name));
   console.log("INFO: answer", res.result);
-  console.log('INFO: tts', tts);
-
   if (requestDialog.talk) {
     console.log('trying to speak');
     AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
@@ -76,6 +86,7 @@ async function answer(message, text, db, client, tts) {
 
 module.exports = { 
   answer,
+  answerGame,
   answerWithDialog
 };
 

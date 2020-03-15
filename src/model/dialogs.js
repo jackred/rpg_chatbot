@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var dialogSchema = new mongoose.Schema(
+const dialogSchema = new mongoose.Schema(
   {
     prefix: {type: String, require: true},
     session_id: {type: String, require: true},
