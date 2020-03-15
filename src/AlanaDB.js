@@ -5,8 +5,8 @@ const config = require('../config.json');
 const configSchema = require('./model/configs');
 const dialogSchema = require('./model/dialogs');
 const channelSchema = require('./model/channels');
-const dialogGameSchema = require('./model/dialogsGame');
 const configGameSchema = require('./model/configsGame');
+const dialogGameSchema = require('./model/dialogsGame');
 
 /*
   /!\ TODO /!\
@@ -24,18 +24,18 @@ class AlanaDB {
   }
   
   async initDb() {
-    //this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true, useUnifiedTopology: true});
-    this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true, useUnifiedTopology: true});
+    this.db = await mongoose.connect("mongodb://172.18.0.2:27017/alana", {useNewUrlParser: true, useUnifiedTopology: true});
+    //this.db = await mongoose.connect(config.mongo, {useNewUrlParser: true, useUnifiedTopology: true});
     // less ugly way? TODO
     this.db.model('configs', configSchema);
     this.db.model('dialogs', dialogSchema);
     this.db.model('channels', channelSchema);
-    this.db.model('configsGame', configSchema);
-    this.db.model('dialogsGame', configSchema);
-
+    this.db.model('configs_game', configGameSchema);
+    this.db.model('dialogs_game', dialogGameSchema);
   }
 
   findOneInCollection(filter={}, projection={}, collection='configs') {
+    console.log('to find', filter);
     return this.db.models[collection].findOne(filter, projection).lean().exec();
   }
 
@@ -49,6 +49,7 @@ class AlanaDB {
 
   addInCollection(added={}, options={}, collection='configs') {
     console.log('to add', added);
+    console.log(collection);
     return this.db.models[collection]
       .insertMany(added, options)
       .then(res => {
@@ -107,6 +108,10 @@ class AlanaDB {
     return this.addInCollection(channelToAdd, {}, 'channels');
   }
 
+  addDialogGame(dialogGameToAdd) {
+    return this.addInCollection(dialogGameToAdd, {}, 'dialogs_game');
+  }
+
   findByIdConfig(id) {
     return this.findOneInCollection(id);
   }
@@ -127,16 +132,36 @@ class AlanaDB {
     return this.findOneInCollection({talk: true}, {}, 'dialogs');
   }
 
-   findOneChannelByUserID (userID) {
-     return this.findOneInCollection({userID}, {}, 'channels');
+  findOneDialogGameListen() {
+    return this.findOneInCollection({"listen.value": true}, {}, 'dialogs_game');
+  }
+
+  findOneDialogGameTalk() {
+    return this.findOneInCollection({"talk.value": true}, {}, 'dialogs_game');
+  }
+
+  findOneDialogGameCGPT2() {
+    return this.findOneInCollection({"gpt2.value": true}, {}, 'dialogs_game');
+  }
+  
+  findOneDialogGameByChannelID(channelID) {
+    return this.findOneInCollection({channelID}, {}, 'dialogs_game');
+  }
+  
+  findOneChannelByUserID (userID) {
+    return this.findOneInCollection({userID}, {}, 'channels');
   }
   
   removeConfigAndReturn(configToRemove) {
     return this.findOneAndDeleteInCollection(configToRemove);
   }
 
-  removeDialog(configToRemove) {
-    return this.deleteInCollection(configToRemove, {}, 'dialogs');
+  removeDialog(dialogToRemove) {
+    return this.deleteInCollection(dialogToRemove, {}, 'dialogs');
+  }
+
+  removeDialogGames(dialogGameToRemove) {
+    return this.deleteInCollection(dialogGameToRemove, {}, 'dialogs_game');
   }
 
   updateOneDialog(filter, doc, options={}) {

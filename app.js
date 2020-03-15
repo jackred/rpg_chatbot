@@ -154,7 +154,7 @@ let devPrefixCmd = new AlanaCommand(
 
 //game commands
 let startGameCommand = new AlanaCommand(
-  AlanaGame.startGame,
+  AlanaGame.startGameClassic,
   {}, 
   () => `\`${config.prefix.game}start_game\n\``,
   function () {
@@ -182,7 +182,7 @@ let startGameGuidedCommand = new AlanaCommand(
 
 let endGameCommand = new AlanaCommand(
   AlanaGame.endGame,
-  {}, 
+  {},
   () => `\`${config.prefix.game}end_game\n\``,
   function () {
     return this.generalHelp() + "Terminate any type of game. It will also close the channel you're in.";

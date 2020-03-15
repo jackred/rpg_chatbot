@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 var dialogGameSchema = new mongoose.Schema(
   {
-    channel: {type: String, require: true},
+    channelID: {type: String, require: true},
     listen: {
       value: {type: Boolean, default: false},
       setAt: {type: Date}

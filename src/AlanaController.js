@@ -78,9 +78,10 @@ class AlanaController {
 
   async catchErrorCommand(fn, channel){
     try {
-      await fn();
+      return await fn();
     } catch (error){
       this.sendError(channel, error);
+      return true;
     } 
   }
   
@@ -94,7 +95,7 @@ class AlanaController {
     }
   }
 
-  handleMessageCommand(command, message, text) {
+  async handleMessageCommand(command, message, text) {
     const permissionLevel = this.getPermission(message.author.id, message.member.roles.cache, message.channel.id);
     console.log('INFO: permission', permissionLevel, 'command permission', command.permission);
     if (permissionLevel < command.permission) {
@@ -104,17 +105,20 @@ class AlanaController {
       if (parsed !== -1){
 	if (parsed.first === config.help){
 	  message.channel.send(command.help.call(command));
-	  return;
+	  return true;
 	}
 	if (parsed.first in command.subCommand){
-	  this.handleMessageCommand(command.subCommand[parsed.first], message, parsed.rest);
+	  const stopHere = await this.handleMessageCommand(command.subCommand[parsed.first], message, parsed.rest);
+	  if (stopHere) { return stopHere; }
 	}
       }
-      this.catchErrorCommand(() => {
-	command.action.call(command, message, text, this.db, this.client, this.tts, this.stt);
+      const stopHere = await this.catchErrorCommand(async () => {
+	return await command.action.call(command, message, text, this.db, this.client, this.tts, this.stt);
       },
-			     message.channel);// some action can trigger command AND args
+						    message.channel);// some action can trigger command AND args
+      return stopHere;
     }
+    return false;
   }
 
   sendError(channel, error){

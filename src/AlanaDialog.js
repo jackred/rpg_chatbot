@@ -42,6 +42,7 @@ function listDialog(message, text, db, client) {
   db.findInCollection({}, {'_id': 0, '__v':0 }, 0, 'dialogs').then(async resDialogs => { 
     AlanaList.sendList(message.channel, resDialogs, async (d) => await AlanaBuildMessage.buildEmbedListDialog(d, db));
   });
+  return true;
 }
 
 async function toggleDialog(message, text, db, client, resDialog, oneP, twoP) {
