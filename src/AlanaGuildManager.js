@@ -50,20 +50,19 @@ async function assignRoles(member, rolesID) {
 }
 
 
-async function removeSTTandTTSRoles(member) {
-  let roles = [config.tts.role, config.stt.role];
-  await removeRoles(member, roles);
+async function removeVoiceRole(member) {
+  let role = config.voiceRole;
+  await removeRoles(member, role);
 }
 
-async function assignSTTandTTSRoles(member, options) {
-  let roles = [];
-  if (options.talk.value) { roles.push(config.tts.role); }
-  if (options.listen.value) { roles.push(config.stt.role); }
-  await assignRoles(member, roles);
+async function assignVoiceRole(member, options) {
+  if ((options.talk.value) || (options.listen.value)) {
+    await assignRoles(member, config.voiceRole);
+  }
 }
 
 module.exports = { 
   createChannel,
-  assignSTTandTTSRoles,
-  removeSTTandTTSRoles
+  assignVoiceRole,
+  removeVoiceRole
 };

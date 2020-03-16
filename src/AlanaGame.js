@@ -43,14 +43,11 @@ async function checkChannel(user, channel, db) {
 async function checkOptionDB(optionDB, db) {
   let msg = '';
   // todo timeout
-  if ((optionDB.talk.value) && (await db.findOneDialogGameTalk() !== null)) {
-    msg += `There's already someone using the text to speech function. You'll have to wait`;
-  }
-  if ((optionDB.listen.value) && (await db.findOneDialogGameListen() !== null)) {
-    msg += `There's already someone using the speech to text function. You'll have to wait`;
+  if (((optionDB.talk.value) || (optionDB.listen.value)) && ((await db.findOneDialogGameListen() !== null) || (await db.findOneDialogGameTalk() !== null))) {
+    msg += `There's already someone using the voice function(s). You'll have to wait\n`;
   }
   if ((optionDB.gpt2.value) && (await db.findOneDialogGameGPT2() !== null)) {
-    msg += `There's already someone using the gpt2 dialog game. You'll have to wait`;
+    msg += `There's already someone using the gpt2 dialog game. You'll have to wait\n`;
   }
   if (msg !== '') {
     throw msg;
@@ -72,14 +69,13 @@ async function startGame(channel, member, db, requestText, client, optionDB={}, 
     } else {
       await checkOptionDB(optionDB, db);
       await db.addDialogGame({...optionDB, channelID: channel.id});
-      await AlanaGuildManager.assignSTTandTTSRoles(member, optionDB);
-      if (optionDB.talk.value) {
-	channel.send('Please join the voice channel to be able to hear the bot');
-	AlanaVoice.joinChannel(client.channels.resolve(config.tts.channel));
-	await sleep(5000); // easier than create a listener for the user to join vocal, talk, and delete the listener
-      } else if (optionDB.listen.value) {
-	channel.send('Please join the voice channel to be able to talk to the bot');
-	await AlanaVoice.joinChannel(client.channels.resolve(config.stt.channel));
+      await AlanaGuildManager.assignVoiceRole(member, optionDB);
+      if ((optionDB.talk.value) || (optionDB.listen.value)) {
+	channel.send('Please join the voice channel to be able to interact with the bot');
+	await AlanaVoice.joinChannel(client.channels.resolve(config.voiceChannel));
+	if (optionDB.talk.value) {
+	  await sleep(5000); // easier than create a listener for the user to join vocal, talk, and delete the listener
+	}
       }
       await AlanaRequest.answerGame(requestText, channel, optionDB, db, client, tts);
     }
@@ -107,7 +103,7 @@ async function endGame(message, text, db, client, tts, stt) {
   await AlanaRequest.answerGame('end_game', message.channel, {talk: {value: false}}, db, client, tts);
   await db.removeDialogGames({channelID: message.channel.id});
   await AlanaVoice.leaveChannelBotIsIn(client);
-  await AlanaGuildManager.removeSTTandTTSRoles(message.member);
+  await AlanaGuildManager.removeVoiceRole(message.member);
   await message.member.voice.kick();
   
 }
