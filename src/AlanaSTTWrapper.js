@@ -22,26 +22,44 @@ function getStreamUserSpeaking(user, voiceConnection) {
 }
 
 
-async function handleVoiceMessage(member, listenDialog, client, db, tts, stt) {
+async function handleVoiceMessage(fn, member, channel, stt) {
   const textFromVoice = await stt.translate();
-  const defaultChannel = client.channels.resolve(config.defaultChannel);
-  defaultChannel.send(AlanaBuildMessage.buildEmbedSTTMessage(textFromVoice, member, listenDialog.prefix));
-  AlanaRequest.answerWithDialog(listenDialog, textFromVoice, client, defaultChannel, db, tts);
+  channel.send(AlanaBuildMessage.buildEmbedSTTMessage(textFromVoice, member));
+  fn(textFromVoice);
 }
 
+async function handleVoiceMessageGame(member, listenDialog, client, db, tts, stt) {
+  const chan = client.channels.resolve(listenDialog.channelID);
+  const fn = (text) => AlanaRequest.answerGame(text, chan, listenDialog, db, client, tts);
+  handleVoiceMessage(fn, member, chan, stt);
+}
 
-function listen(speaking, member, voiceConnection, listenDialog, options) {
+async function handleVoiceMessageDev(member, listenDialog, client, db, tts, stt) {
+  const defaultChannel = client.channels.resolve(config.defaultChannel);
+  const fn = (text) => AlanaRequest.answerWithDialog(listenDialog, text, client, defaultChannel, db, tts);
+  handleVoiceMessage(fn, member, defaultChannel, stt);
+}
+
+function listen(speaking, member, voiceConnection, listenDialog, options, fn) {
   if (speaking.equals(1)) {
     console.log('INFO: user talking?', member.user.username, speaking);
     const speakingStream = getStreamUserSpeaking(member, voiceConnection);
     const mp3WrittingStream = pcmStreamToMP3file(speakingStream);
-    mp3WrittingStream.on("close", () => handleVoiceMessage(member, listenDialog, ...options));
+    mp3WrittingStream.on("close", () => fn(member, listenDialog, ...options));
   } else if (speaking.equals(0)) {
     console.log('INFO: user talking?', member.user.username, speaking);
-  }
+  } 
 }
 
+function listenGame(speaking, member, voiceConnection, listenDialogGame, options) {
+  listen(speaking, member, voiceConnection, listenDialogGame, options, handleVoiceMessageGame);
+}
+
+function listenDev(speaking, member, voiceConnection, listenDialog, options) {
+  listen(speaking, member, voiceConnection, listenDialog, options, handleVoiceMessageDev);
+}
 
 module.exports = { 
-  listen
+  listenDev,
+  listenGame
 };

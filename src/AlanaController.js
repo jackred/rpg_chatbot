@@ -60,19 +60,32 @@ class AlanaController {
 	this.sendError(dmChannel, 'Insufficient permission');
       } else {
 	this.catchErrorCommand(() => reactionCommand.action.call(reactionCommand, reaction, user, this.db, this.client, this.tts, this.stt),
-			      dmChannel);
+			       dmChannel);
       }
     }
   }
 
   async handleVocalMessage(member, speaking){
-    const listenDialog = await this.db.findOneDialogListen();
-    if (listenDialog.listen) {
-      const voiceConnection = AlanaVoice.getVoiceConnection(this.client);
-      try{
-	AlanaSTTWrapper.listen(speaking, member, voiceConnection, listenDialog, [this.client, this.db, this.tts, this.stt]);
-      } catch (error) {
-	this.sendError(this.client.channels.resolve(config.defaultChannel), error);
+    if (member.voice.channelID === config.voiceChannel) {
+      const dbChannel = await this.db.findOneChannelByUserID(member.user.id);
+      const listenDialogGame = await this.db.findOneDialogGameByChannelID(dbChannel.channelID);
+      if (listenDialogGame.listen) {
+	const voiceConnection = AlanaVoice.getVoiceConnection(this.client);
+	try{
+	  AlanaSTTWrapper.listenGame(speaking, member, voiceConnection, listenDialogGame, [this.client, this.db, this.tts, this.stt]);
+	} catch (error) {
+	  this.sendError(this.client.channels.resolve(config.defaultChannel), error);
+	}
+      }
+    } else {
+      const listenDialog = await this.db.findOneDialogListen();
+      if (listenDialog.listen) {
+	const voiceConnection = AlanaVoice.getVoiceConnection(this.client);
+	try{
+	  AlanaSTTWrapper.listenDev(speaking, member, voiceConnection, listenDialog, [this.client, this.db, this.tts, this.stt]);
+	} catch (error) {
+	  this.sendError(this.client.channels.resolve(config.defaultChannel), error);
+	}
       }
     }
   }

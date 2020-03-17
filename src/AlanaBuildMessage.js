@@ -19,11 +19,13 @@ function buildEmbedAnswer(text, authorName, configName)  {
   return embed;
 }
 
-function buildEmbedSTTMessage(text, member, dialogName) {
-  let embed = buildEmbedAnswerTemplate(text, [member.user.username, member.user.avatarURL()], dialogName, member.displayHexColor);
+
+function buildEmbedSTTMessage(text, member) {
+  let embed = buildEmbedAnswerTemplate(text, [member.user.username, member.user.avatarURL()], "stt", member.displayHexColor);
   embed.setTitle('STT message');
   return embed;
 }
+
 
 function buildEmbedListTemplate(title) {
   let embed = new MessageEmbed()
@@ -32,6 +34,7 @@ function buildEmbedListTemplate(title) {
       .setTitle(title);
   return embed;
 }
+
 
 function buildFieldConfig(conf) {
   const title = conf.name;
@@ -47,6 +50,7 @@ function buildFieldConfig(conf) {
   return {name: `**${title}**`, value, inline: false};
 }
 
+
 function buildFieldsConfig(configs, embed) {
   let fields = [];
   for (let conf of configs) {
@@ -56,11 +60,13 @@ function buildFieldsConfig(configs, embed) {
   return embed;
 }
 
+
 function buildEmbedListConfig(configs) {
   let embed = buildEmbedListTemplate('List of configuration');
   embed = buildFieldsConfig(configs, embed);
   return embed;
 }
+
 
 function buildFieldDialog(dial, confName) {
   const title = dial.prefix + ' ' + confName;
@@ -69,6 +75,7 @@ function buildFieldDialog(dial, confName) {
   const value = Object.keys(dial).map(k => k + ': '+ JSON.stringify(dial[k])).join('\n');
   return {name: `**${title}**`, value, inline: false};
 }
+
 
 async function buildFieldsDialog(dialogs, embed, db) {
   let fields = [];
@@ -80,17 +87,20 @@ async function buildFieldsDialog(dialogs, embed, db) {
   return embed;
 }
 
+
 async function buildEmbedListDialog(dialogs, db) {
   let embed = buildEmbedListTemplate('List of dialogs');
   embed = await buildFieldsDialog(dialogs, embed, db);
   return embed;
 }
 
+
 async function buildEmbedDialog(dialog, db) {
   let embed = buildEmbedListTemplate('Dialog');
   embed = await buildFieldsDialog([dialog], embed, db);
   return embed;
 }
+
 
 module.exports = { 
   buildEmbedAnswer,
