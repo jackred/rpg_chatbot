@@ -16,6 +16,9 @@
   "projectId": "CA2020",
   "mongo": "mongodb://<IP>:<PORT>/alana",
   "user_id": "<NAME_ID>",
-  "default_channel": "<Discord Channel ID>"
-
+  "defaultChannel": "<Discord Channel ID>",
+  "rulesChannel": "<Discord Channel ID>",
+  "voiceChannel": "<Discord Channel ID>",
+  "voiceRole": "<Discord Role ID>",
+  "timeout": 900000
 }

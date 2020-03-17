@@ -39,6 +39,7 @@ function endDialog(message, text, db, client) {
 }
 
 function listDialog(message, text, db, client) {
+  console.log('list');
   db.findInCollection({}, {'_id': 0, '__v':0 }, 0, 'dialogs').then(async resDialogs => { 
     AlanaList.sendList(message.channel, resDialogs, async (d) => await AlanaBuildMessage.buildEmbedListDialog(d, db));
   });

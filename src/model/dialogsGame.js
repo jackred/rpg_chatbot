@@ -3,18 +3,10 @@ const mongoose = require('mongoose');
 const dialogGameSchema = new mongoose.Schema(
   {
     channelID: {type: String, require: true},
-    listen: {
-      value: {type: Boolean, default: false},
-      setAt: {type: Date}
-    },
-    talk: {
-      value: {type: Boolean, default: false},
-      setAt: {type: Date}
-    },
-    gpt2: {
-      value: {type: Boolean, default: false},
-      setAt: {type: Date}
-    },
+    listen: {type: Boolean, default: false},
+    talk: {type: Boolean, default: false},
+    gpt2:{type: Boolean, default: false},
+    usedAt: {type: Date, default: Date.now}
   }
 );
 

@@ -147,15 +147,15 @@ class AlanaDB {
   }
 
   findOneDialogGameListen() {
-    return this.findOneInCollection({"listen.value": true}, {}, 'dialogs_game');
+    return this.findOneInCollection({"listen.": true}, {}, 'dialogs_game');
   }
 
   findOneDialogGameTalk() {
-    return this.findOneInCollection({"talk.value": true}, {}, 'dialogs_game');
+    return this.findOneInCollection({"talk": true}, {}, 'dialogs_game');
   }
 
   findOneDialogGameGPT2() {
-    return this.findOneInCollection({"gpt2.value": true}, {}, 'dialogs_game');
+    return this.findOneInCollection({"gpt2": true}, {}, 'dialogs_game');
   }
   
   findOneDialogGameByChannelID(channelID) {

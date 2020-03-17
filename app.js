@@ -18,6 +18,7 @@ const AlanaConfig = require('./src/AlanaConfig');
 const AlanaDialog = require('./src/AlanaDialog');
 const AlanaGame = require('./src/AlanaGame');
 const AlanaGuildManager = require('./src/AlanaGuildManager');
+const AlanaGameManager = require('./src/AlanaGameManager');
 
 
 let database = new AlanaDB();
@@ -29,6 +30,9 @@ const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 client.on('ready', () => {
   console.log('Starting!');
   client.user.setActivity(`Listening to : ${config.prefix.dev}`);
+  const chan = client.channels.resolve(config.rulesChannel);
+  const emoji = chan.guild.emojis.cache.find(d => d.name === 'play');
+  chan.messages.fetchPinned().then(msgs => msgs.forEach(msg => msg.react(emoji)));
 });
 
 // config command
@@ -227,4 +231,10 @@ let reactionCmd = {'play': reactionPlay};
 let controller = new AlanaController(client, cmdMessage, reactionCmd, {}, database, tts, stt);
 
 
+const interval = setInterval(() => {
+  AlanaGameManager.clearOldGPT2OrVoice(database, client, tts);
+}, config.timeout);
+
+
 client.login(config.token).then(() => console.log("We're in!")).catch((err) => console.log(err));
+

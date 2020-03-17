@@ -51,7 +51,7 @@ async function answerGame(text, channel, optionsDB, db, client, tts) {
   const res = await requestAlana(options);
   channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || res.bot_name, 'RPG_Bot'));
   console.log("INFO: answer", res.result);
-  if (optionsDB.talk.value) {
+  if (optionsDB.talk) {
     console.log('trying to speak');
     await AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
   }
@@ -71,15 +71,24 @@ async function answerWithDialog(requestDialog, text, client, channel, db, tts) {
 
 
 async function answer(message, text, db, client, tts) {
-  const requestDialog = await db.findDialogByPrefix(text[0]);
-  console.log( `INFO: dialog prefix found: ${requestDialog !== null}`);
-  if (requestDialog !== null) { // else not a prefix, regular message
-    if (this.permission < permission.whitelist) {
-      throw `Insufficient permisison`;
+  const requestChannel = await db.findOneChannelByChannelID(message.channel.id);
+  console.log( `INFO: channel found: ${requestChannel !== null}`);
+  if ((requestChannel !== null) && (requestChannel.userID === message.author.id)) {
+    const requestDialogGame = await db.findOneDialogGameByChannelID(message.channel.id);
+    if (requestDialogGame !== null) {
+      await answerGame(text, message.channel, requestDialogGame, db, client, tts);
+    } else {
+      message.channel.send('You need to start game to discuss with the bot.');
     }
-    answerWithDialog(requestDialog, text.substr(1), client, message.channel, db, tts);
   } else {
-    
+    const requestDialog = await db.findDialogByPrefix(text[0]);
+    console.log( `INFO: dialog prefix found: ${requestDialog !== null}`);
+    if (requestDialog !== null) { // else not a prefix, regular message
+      if (this.permission < permission.whitelist) {
+	throw `Insufficient permisison`;
+      }
+      await answerWithDialog(requestDialog, text.substr(1), client, message.channel, db, tts);
+    }
   }
 }
 

@@ -8,23 +8,14 @@ const AlanaRequest = require('./AlanaRequest');
 const config = require('../config.json');
 
 
-function setOption(value) {
-  if (value) {
-    return  {value: true, setAt: Date.now()};
-  } else {
-    return {value: false};
-  }
-}
-
-
 function isTalkListenArg(text) {
   if (text.replace('talk', '').replace('listen','').replace(' ','') !== '') {
     throw 'Argument for start function should be `talk` or/and `listen`';
   }
   const args = text.split(' ');
   let res = {};
-  res.talk = setOption(args.some(d => d === 'talk'));
-  res.listen = setOption(args.some(d => d === 'listen'));
+  res.talk = args.some(d => d === 'talk');
+  res.listen = args.some(d => d === 'listen');
   return res;
 }
 
@@ -43,10 +34,10 @@ async function checkChannel(user, channel, db) {
 async function checkOptionDB(optionDB, db) {
   let msg = '';
   // todo timeout
-  if (((optionDB.talk.value) || (optionDB.listen.value)) && ((await db.findOneDialogGameListen() !== null) || (await db.findOneDialogGameTalk() !== null))) {
+  if (((optionDB.talk) || (optionDB.listen)) && ((await db.findOneDialogGameListen() !== null) || (await db.findOneDialogGameTalk() !== null))) {
     msg += `There's already someone using the voice function(s). You'll have to wait\n`;
   }
-  if ((optionDB.gpt2.value) && (await db.findOneDialogGameGPT2() !== null)) {
+  if ((optionDB.gpt2) && (await db.findOneDialogGameGPT2() !== null)) {
     msg += `There's already someone using the gpt2 dialog game. You'll have to wait\n`;
   }
   if (msg !== '') {
@@ -70,11 +61,11 @@ async function startGame(channel, member, db, requestText, client, optionDB={}, 
       await checkOptionDB(optionDB, db);
       await db.addDialogGame({...optionDB, channelID: channel.id});
       await AlanaGuildManager.assignVoiceRole(member, optionDB);
-      if ((optionDB.talk.value) || (optionDB.listen.value)) {
+      if ((optionDB.talk) || (optionDB.listen)) {
 	channel.send('Please join the voice channel to be able to interact with the bot');
 	await AlanaVoice.joinChannel(client.channels.resolve(config.voiceChannel));
-	if (optionDB.talk.value) {
-	  await sleep(5000); // easier than create a listener for the user to join vocal, talk, and delete the listener
+	if (optionDB.talk) {
+	  await sleep(2000); // easier than create a listener for the user to join vocal, talk, and delete the listener
 	}
       }
       await AlanaRequest.answerGame(requestText, channel, optionDB, db, client, tts);
@@ -84,28 +75,35 @@ async function startGame(channel, member, db, requestText, client, optionDB={}, 
 
 
 async function startGameClassic(message, text, db, client, tts, stt) {
-  await startGame(message.channel, message.member, db, 'start_game', client, {gpt2: {value: false}, ...isTalkListenArg(text)}, tts);
+  await startGame(message.channel, message.member, db, 'start_game', client, {gpt2: false, ...isTalkListenArg(text)}, tts);
+  return true;
 }
 
 
 async function startGameGPT2(message, text, db, client, tts, stt) {
-  await startGame(message.channel, message.member, db, 'start_game_gpt2', client, {gpt2: {value: true, setAt: Date.now()}, ...isTalkListenArg(text)}, tts);
+  await startGame(message.channel, message.member, db, 'start_game_gpt2', client, {gpt2: true, ...isTalkListenArg(text)}, tts);
+  return true;
 }
 
 
 async function startGameGuided(message, text, db, client, tts, stt) {
-  await startGame(message.channel, message.member, db, 'start_game_close', client, {gpt2: {value: false}, ...isTalkListenArg(text)}, tts);
+  await startGame(message.channel, message.member, db, 'start_game_close', client, {gpt2: false, ...isTalkListenArg(text)}, tts);
+  return true;
 }
 
 
-async function endGame(message, text, db, client, tts, stt) {
+async function endGameAction(channel, member, db, client, tts) {
   // request end
-  await AlanaRequest.answerGame('end_game', message.channel, {talk: {value: false}}, db, client, tts);
-  await db.removeDialogGames({channelID: message.channel.id});
+  await AlanaRequest.answerGame('end_game', channel, {talk: false}, db, client, tts);
+  await db.removeDialogGames({channelID: channel.id});
   await AlanaVoice.leaveChannelBotIsIn(client);
-  await AlanaGuildManager.removeVoiceRole(message.member);
-  await message.member.voice.kick();
-  
+  await AlanaGuildManager.removeVoiceRole(member);
+  await member.voice.kick();
+}
+
+async function endGame(message, text, db, client, tts, stt) {
+  endGameAction(message.channel, message.member, db, client, tts);
+  return true;
 }
 
 
@@ -113,5 +111,6 @@ module.exports = {
   startGameClassic,
   startGameGPT2,
   startGameGuided,
+  endGameAction,
   endGame
 };

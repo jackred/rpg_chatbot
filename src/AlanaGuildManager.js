@@ -38,6 +38,7 @@ async function createChannel(reaction, user, db, client) {
     newChan.send(`Hey ${user}!, You have now an assigned channel to play.`);
   }
   await reaction.remove();
+  reaction.message.react(reaction.emoji);
 }
 
 
@@ -56,7 +57,7 @@ async function removeVoiceRole(member) {
 }
 
 async function assignVoiceRole(member, options) {
-  if ((options.talk.value) || (options.listen.value)) {
+  if ((options.talk) || (options.listen)) {
     await assignRoles(member, config.voiceRole);
   }
 }

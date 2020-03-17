@@ -48,6 +48,7 @@ class AlanaController {
   }
   
   async handleReactionAdd(reaction, user){
+    if (user.bot) { return; }
     if (reaction.message.partial) { await reaction.message.fetch(); }
     if (reaction.partial) { await reaction.fetch(); }
     if (!(reaction.message.channel instanceof TextChannel)) { return; }
