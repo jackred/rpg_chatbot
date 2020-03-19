@@ -6,12 +6,14 @@ const uniqueConfigGame = {
     "BOT_LIST": [
       { "toby":"http://seblg.eu:5130/" },
       "aiml_bot",
-      "evi"
+      "evi",
+      {"boby":"http://seblg.eu:5140/"}
     ],
     "PRIORITY_BOTS": [
       "toby",
       "eliza",
-      "evi"
+      "evi",
+      "boby"
     ]
   }
 };
