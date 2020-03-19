@@ -29,7 +29,7 @@ let stt = new AlanaSTT();
 const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 client.on('ready', () => {
   console.log('Starting!');
-  client.user.setActivity(`Listening to : ${config.prefix.dev}`);
+  client.user.setActivity(`Listening to : ${config.prefix.game}`);
   const chan = client.channels.resolve(config.rulesChannel);
   const emoji = chan.guild.emojis.cache.find(d => d.name === 'play');
   chan.messages.fetchPinned().then(msgs => msgs.forEach(msg => msg.react(emoji)));
