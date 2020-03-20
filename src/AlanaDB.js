@@ -185,6 +185,10 @@ class AlanaDB {
   updateOneDialog(filter, doc, options={}) {
     return this.updateOneInCollection(filter, doc, options, 'dialogs');
   }
+
+  updateOneDialogGamesNPC(filter, npc, options={}) {
+    return this.updateOneInCollection(filter, {$set: {npc}}, options, 'dialogs_game');
+  }
 }
 
 

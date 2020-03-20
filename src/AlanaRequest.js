@@ -49,7 +49,11 @@ async function answerGame(text, channel, optionsDB, db, client, tts) {
   const requestConfigGame = await db.findConfigGame();
   const options = buildOptions(text, requestConfigGame, channel.id);
   const res = await requestAlana(options);
-  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || res.bot_name, 'RPG_Bot'));
+  if (res.bot_params.name !== undefined) {
+    await db.updateOneDialogGamesNPC({channelID: channel.id}, res.bot_params.name);
+  }
+  console.log('option', optionsDB.npc, 'res', res.bot_params);
+  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || optionsDB.npc || res.bot_name, 'RPG_Bot'));
   console.log("INFO: answer", res.result);
   if (optionsDB.talk) {
     console.log('trying to speak');

@@ -6,7 +6,8 @@ const dialogGameSchema = new mongoose.Schema(
     listen: {type: Boolean, default: false},
     talk: {type: Boolean, default: false},
     gpt2:{type: Boolean, default: false},
-    usedAt: {type: Date, default: Date.now}
+    usedAt: {type: Date, default: Date.now},
+    npc: {type: String}
   }
 );
 
