@@ -99,11 +99,15 @@ async function endGameAction(channel, member, db, client, tts) {
   await AlanaVoice.leaveChannelBotIsIn(client);
   await AlanaGuildManager.removeVoiceRole(member);
   await member.voice.kick();
+  await channel.send(`ID of your game: ${channel.id}`);
 }
 
 async function endGame(message, text, db, client, tts, stt) {
-  endGameAction(message.channel, message.member, db, client, tts);
-  return true;
+  if (await checkChannel(message.member.user, message.channel, db)) {
+    endGameAction(message.channel, message.member, db, client, tts);
+    return true;
+  }
+  return false;
 }
 
 
