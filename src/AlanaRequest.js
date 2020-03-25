@@ -2,6 +2,7 @@
 
 const request = require('request-promise-native');
 const AlanaBuildMessage = require('./AlanaBuildMessage');
+const AlanaGameAction = require('./AlanaGameAction');
 const AlanaVoice = require('./AlanaVoice');
 const config = require('../config.json');
 const permission = require('../permission.json');
@@ -58,6 +59,10 @@ async function answerGame(text, channel, optionsDB, db, client, tts) {
   if (optionsDB.talk) {
     console.log('trying to speak');
     await AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
+  }
+  if (res.bot_params.over) {
+    const dbChannel = await db.findOneChannelByChannelID(channel.id);
+    await AlanaGameAction.deleteGame(channel, channel.members.get(dbChannel.userID), db, client);
   }
 }
 

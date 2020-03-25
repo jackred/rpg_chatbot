@@ -4,7 +4,7 @@
 const AlanaGuildManager = require('./AlanaGuildManager');
 const AlanaVoice = require('./AlanaVoice');
 const AlanaRequest = require('./AlanaRequest');
-
+const AlanaGameAction = require('./AlanaGameAction');
 const config = require('../config.json');
 
 
@@ -91,20 +91,21 @@ async function startGameGuided(message, text, db, client, tts, stt) {
   return true;
 }
 
-
 async function endGameAction(channel, member, db, client, tts) {
   // request end
-  await AlanaRequest.answerGame('end_game', channel, {talk: false}, db, client, tts);
-  await db.removeDialogGames({channelID: channel.id});
-  await AlanaVoice.leaveChannelBotIsIn(client);
-  await AlanaGuildManager.removeVoiceRole(member);
-  await member.voice.kick();
-  await channel.send(`ID of your game: ${channel.id}`);
+  await AlanaRequest.answerGame(`end_game_${channel.id}`, channel, {talk: false}, db, client, tts);
+  await AlanaGameAction.deleteGame(channel, member, db, client);
 }
 
 async function endGame(message, text, db, client, tts, stt) {
+
   if (await checkChannel(message.member.user, message.channel, db)) {
-    endGameAction(message.channel, message.member, db, client, tts);
+    const dbDialog = await db.findOneDialogGameByChannelID(message.channel.id);
+    if (dbDialog !== null) {
+      endGameAction(message.channel, message.member, db, client, tts);
+    } else {
+      throw "There's no game going on.";
+    }
     return true;
   }
   return false;
@@ -116,5 +117,5 @@ module.exports = {
   startGameGPT2,
   startGameGuided,
   endGameAction,
-  endGame
+  endGame,
 };
