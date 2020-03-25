@@ -9,14 +9,14 @@ function timeDiff(date1, date2=Date.now()) {
 }
 
 
-function isThereAHour(date) {
+function didTimePassed(date) {
   return timeDiff(date) >= config.timeout;
 }
 
 
 async function clearTalk(db, client, tts) {
   const talkDialog = await db.findOneDialogGameTalk();
-  if ((talkDialog !== null) && (talkDialog.talk) && isThereAHour(talkDialog.usedAt)) {
+  if ((talkDialog !== null) && didTimePassed(talkDialog.usedAt)) {
     const dbChannel = await db.findOneChannelByChannelID(talkDialog.channelID);
     const chan = client.channels.resolve(talkDialog.channelID);
     await chan.send('Closing the game by timeout.');
@@ -27,7 +27,7 @@ async function clearTalk(db, client, tts) {
 
 async function clearListen(db, client, tts) {
   const listenDialog = await db.findOneDialogGameTalk();
-  if ((listenDialog !== null) && (listenDialog.listen) && isThereAHour(listenDialog.usedAt)) {
+  if ((listenDialog !== null) && didTimePassed(listenDialog.usedAt)) {
     const dbChannel = await db.findOneChannelByChannelID(listenDialog.channelID);
     const chan = client.channels.resolve(listenDialog.channelID);
     await chan.send('Closing the game by timeout.');
@@ -38,7 +38,7 @@ async function clearListen(db, client, tts) {
 
 async function clearGPT2(db, client, tts) {
   const gpt2Dialog = await db.findOneDialogGameGPT2();
-  if ((gpt2Dialog !== null) && (gpt2Dialog.gpt2) && isThereAHour(gpt2Dialog.usedAt)) {
+  if ((gpt2Dialog !== null) && didTimePassed(gpt2Dialog.usedAt)) {
     const dbChannel = await db.findOneChannelByChannelID(gpt2Dialog.channelID);
     const chan = client.channels.resolve(gpt2Dialog.channelID);
     await chan.send('Closing the game by timeout.');
