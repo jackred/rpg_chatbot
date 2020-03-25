@@ -186,6 +186,10 @@ class AlanaDB {
     return this.updateOneInCollection(filter, doc, options, 'dialogs');
   }
 
+  updateOneDialogGameTime(filter, options={}) {
+    return this.updateOneInCollection(filter, {$set: {usedAt: Date.now()}}, options, 'dialogs_game');
+  }
+  
   updateOneDialogGamesNPC(filter, npc, options={}) {
     return this.updateOneInCollection(filter, {$set: {npc}}, options, 'dialogs_game');
   }

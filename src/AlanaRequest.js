@@ -53,6 +53,7 @@ async function answerGame(text, channel, optionsDB, db, client, tts) {
   if (res.bot_params.name !== undefined) {
     await db.updateOneDialogGamesNPC({channelID: channel.id}, res.bot_params.name);
   }
+  await db.updateOneDialogGameTime({channelID: channel.id});
   console.log('option', optionsDB.npc, 'res', res.bot_params);
   channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || optionsDB.npc || res.bot_name, 'RPG_Bot'));
   console.log("INFO: answer", res.result);

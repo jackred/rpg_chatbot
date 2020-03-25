@@ -54,7 +54,6 @@ function sleep(ms) {
 async function startGame(channel, member, db, requestText, client, optionDB={}, tts) {
   if (await checkChannel(member.user, channel, db)) {
     const dbDialog = await db.findOneDialogGameByChannelID(channel.id);
-    console.log(dbDialog);
     if (dbDialog !== null) {
       throw `There's already a game going on!`;
     } else {
