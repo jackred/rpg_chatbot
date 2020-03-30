@@ -35,7 +35,9 @@ async function createChannel(reaction, user, db, client) {
 			  } );
     
     await db.addChannel({channelID: newChan.id, userID: user.id});
-    newChan.send(`Hey ${user}!, You have now an assigned channel to play.`);
+    newChan.send(
+      `Hey ${user}!, You have now an assigned channel to play.
+Please enter the command you were given to start playing.`);
   }
   await reaction.remove();
   reaction.message.react(reaction.emoji);
