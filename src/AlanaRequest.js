@@ -50,20 +50,28 @@ async function answerGame(text, channel, optionsDB, db, client, tts) {
   const requestConfigGame = await db.findConfigGame();
   const options = buildOptions(text, requestConfigGame, channel.id);
   const res = await requestAlana(options);
-  if (res.bot_params.name !== undefined) {
-    await db.updateOneDialogGamesNPC({channelID: channel.id}, res.bot_params.name);
-  }
-  await db.updateOneDialogGameTime({channelID: channel.id});
-  console.log('option', optionsDB.npc, 'res', res.bot_params);
-  channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || optionsDB.npc || res.bot_name, 'RPG_Bot'));
-  console.log("INFO: answer", res.result);
-  if (optionsDB.talk) {
-    console.log('trying to speak');
-    await AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
-  }
-  if (res.bot_params.over) {
+  if ((res.bot_params.game_exist !== undefined) && (!res.bot_params.game_exist)) {
     const dbChannel = await db.findOneChannelByChannelID(channel.id);
-    await AlanaGameAction.deleteGame(channel, channel.members.get(dbChannel.userID), db, client);
+    if (dbChannel !== null) {
+      await AlanaGameAction.deleteGame(channel, channel.members.get(dbChannel.userID), db, client);
+    }
+    channel.send('You need to start a game to discuss with the bot.');
+  } else {
+    if (res.bot_params.name !== undefined) {
+      await db.updateOneDialogGamesNPC({channelID: channel.id}, res.bot_params.name);
+    }
+    await db.updateOneDialogGameTime({channelID: channel.id});
+    console.log('option', optionsDB.npc, 'res', res.bot_params);
+    channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || optionsDB.npc || res.bot_name, 'RPG_Bot'));
+    console.log("INFO: answer", res.result);
+    if (optionsDB.talk) {
+      console.log('trying to speak');
+      await AlanaVoice.readAnswer(res.result, res.bot_params.voice, client, tts);
+    }
+    if (res.bot_params.over) {
+      const dbChannel = await db.findOneChannelByChannelID(channel.id);
+      await AlanaGameAction.deleteGame(channel, channel.members.get(dbChannel.userID), db, client);
+    }
   }
 }
 
@@ -88,7 +96,7 @@ async function answer(message, text, db, client, tts) {
     if (requestDialogGame !== null) {
       await answerGame(text, message.channel, requestDialogGame, db, client, tts);
     } else {
-      message.channel.send('You need to start game to discuss with the bot.');
+      message.channel.send('You need to start a game to discuss with the bot.');
     }
   } else {
     const requestDialog = await db.findDialogByPrefix(text[0]);
