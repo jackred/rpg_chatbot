@@ -55,14 +55,14 @@ async function answerGame(text, channel, optionsDB, db, client, tts) {
     if (dbChannel !== null) {
       await AlanaGameAction.deleteGame(channel, channel.members.get(dbChannel.userID), db, client);
     }
-    channel.send('You need to start a game to discuss with the bot.');
+    channel.send('There is no existing game.');
   } else {
     if (res.bot_params.name !== undefined) {
       await db.updateOneDialogGamesNPC({channelID: channel.id}, res.bot_params.name);
     }
     await db.updateOneDialogGameTime({channelID: channel.id});
     console.log('option', optionsDB.npc, 'res', res.bot_params);
-    channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, res.bot_params.name || optionsDB.npc || res.bot_name, 'RPG_Bot'));
+    channel.send(AlanaBuildMessage.buildEmbedAnswer(res.result, optionsDB.npc || res.bot_params.name || res.bot_name, 'RPG_Bot'));
     console.log("INFO: answer", res.result);
     if (optionsDB.talk) {
       console.log('trying to speak');
